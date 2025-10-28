@@ -19,6 +19,7 @@ universitaire.
 ## Plateforme de planification de travail commune 
 - Google document : https://docs.google.com/document/d/1L-CobBIBkGA2hp2uQdm-1rWM1e1K8aGD3Qc6llwNw1A/edit?usp=sharing
 - Gitlab issue boards
+- Document excel : https://uqam-my.sharepoint.com/:x:/r/personal/ea091990_ens_uqam_ca/_layouts/15/doc2.aspx?sourcedoc=%7B94E56C7F-0D0C-4426-BBB6-6713C15443B4%7D&file=Equipe%238-UqaMarketplace-Liste_Activites-Gabarit.xlsx&action=default&mobileredirect=true&wdOrigin=APPHOME-WEB.DIRECT%2CAPPHOME-WEB.UNAUTH%2CAPPHOME-WEB.SHELL.SIGNIN%2CAPPHOME-WEB.JUMPBACKIN&wdPreviousSession=0dca8338-764c-4f5f-b610-a6fae1e3c252&wdPreviousSessionSrc=AppHomeWeb&ct=1759848408288 
 
 ## Technologie
 - Frontend : React + JavaScript
@@ -40,13 +41,11 @@ Travail réalisé par:
 - Loucif, Adel
 - Rhazouani, Houda
 
-## Scrum master
-- Loucif, Adel
-
-## License
-
 ## Tp1 statut
 - Page wiki Tp1 equipe 8 pdf disponible
 
+## Tp2 statut
+- Page wiki Tp2 equipe 8 pdf disponible
+
 ## Projet statut
-- Tp2 a realiser
+- Tp3 Sprint # 1 en cours
