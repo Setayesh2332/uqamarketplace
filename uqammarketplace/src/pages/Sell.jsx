@@ -1,7 +1,9 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./Sell.css";
 
 export default function Sell() {
+    const navigate = useNavigate();
     // ----- form state -----
     const [form, setForm] = useState({
         category: "Choisir",
@@ -51,16 +53,21 @@ export default function Sell() {
 
     const onSubmit = (e) => {
         e.preventDefault();
-
         // TODO: hook to backend (e.g., Supabase) later
-        // For now, show a quick confirmation
-        alert("Formulaire prêt à être envoyé (backend à brancher).");
+        const listing = {
+            title: form.title.trim(),
+            price: form.price.trim(),
+            program: form.program.trim(),
+            course: form.course.trim(),
+            condition: form.condition,
+            description: form.description.trim(),
+            status: "Active",
+            images: images.map((im) => im.file.name),   // just names as placeholders
+            created_at: new Date().toISOString(),       // now
+        };
 
-        // Example payload you can reuse:
-        // const payload = {
-        //   ...form,
-        //   images, // you'll upload files: images.map(i => i.file)
-        // };
+        // Go to success page with the data
+        navigate("/publish-success", { state: { listing } });
     };
 
     // ----- UI -----

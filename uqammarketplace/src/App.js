@@ -5,6 +5,7 @@ import Login from "./pages/login";
 import SignUp from "./pages/signUp";
 import Profile from "./pages/profile";
 import Sell from "./pages/Sell";
+import PublishSuccess from "./pages/PublishSuccess";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/signup" element={<SignUp />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/sell" element={<Sell />} />
+        <Route path="/publish-success" element={<PublishSuccess />} />
       </Routes>
     </Router>
   );
