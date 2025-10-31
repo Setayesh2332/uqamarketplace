@@ -7,11 +7,17 @@ import {
   MDBCard,
   MDBCardBody,
   MDBInput,
-  MDBIcon,
 } from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Login() {
+  const navigate = useNavigate();
+
+  const handleLogin = () => {
+    // Redirection directe vers le profil sans validation
+    navigate("/profile");
+  };
+
   return (
     <MDBContainer
       fluid
@@ -45,6 +51,7 @@ function Login() {
               <p className="text-dark mb-5">
                 Please enter your login and password!
               </p>
+
               <MDBInput
                 wrapperClass="mb-4 mx-5 w-100"
                 labelClass="text-dark"
@@ -61,7 +68,7 @@ function Login() {
                 type="password"
                 size="lg"
               />
-              <p className="small mb-3 pb-lg-2">
+              <p className="small mb-3 pb-lg-2 text-center">
                 <a
                   className="text-dark fw-bold"
                   href="#!"
@@ -74,9 +81,11 @@ function Login() {
                 className="mx-2 px-5 w-100"
                 style={{ backgroundColor: "#1E3A5F", borderColor: "#1E3A5F" }}
                 size="lg"
+                onClick={handleLogin}
               >
                 Login
               </MDBBtn>
+
               <div className="mt-4">
                 <p className="mb-0 text-center">
                   Don't have an account?{" "}
