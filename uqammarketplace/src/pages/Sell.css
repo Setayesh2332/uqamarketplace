@@ -155,7 +155,6 @@ fieldset > legend {
     background: #0062b3;
 }
 
-/* Responsive */
 @media (max-width: 820px) {
     .sell-form {
         grid-template-columns: 1fr;
@@ -191,24 +190,23 @@ fieldset > legend {
 
     /* Contact section spans full width and stacks its content */
     .contact-fieldset {
-        grid-column: 1 / -1;     /* safety */
+        grid-column: 1 / -1;
         padding: 12px;
     }
 
     .contact-grid {
-        grid-template-columns: 1fr;   /* stack label + input */
+        grid-template-columns: 1fr;
         gap: 8px;
     }
 
     .contact-option {
-        margin-top: 8px;             /* little breathing room */
+        margin-top: 8px;
     }
 
     .contact-input input {
         width: 100%;
     }
 
-    /* Image grid gets more height per tile on small screens */
     .image-card img {
         height: 160px;
     }
