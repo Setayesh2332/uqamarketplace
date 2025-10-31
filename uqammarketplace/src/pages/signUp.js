@@ -11,7 +11,7 @@ import {
 } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 
-function Login() {
+function SignUp() {
   return (
     <MDBContainer
       fluid
@@ -39,17 +39,31 @@ function Login() {
                 justifyContent: "center",
               }}
             >
-              <h2 className="fw-bold mb-0 text-white">LOGIN</h2>
+              <h2 className="fw-bold mb-0 text-white">SIGN UP</h2>
             </div>
             <MDBCardBody className="p-5 d-flex flex-column align-items-center mx-auto w-100">
-              <p className="text-dark mb-5">
-                Please enter your login and password!
-              </p>
+              <p className="text-dark mb-5">Create your account!</p>
+              <MDBInput
+                wrapperClass="mb-4 mx-5 w-100"
+                labelClass="text-dark"
+                label="First name"
+                id="formControlLg1"
+                type="text"
+                size="lg"
+              />
+              <MDBInput
+                wrapperClass="mb-4 mx-5 w-100"
+                labelClass="text-dark"
+                label="Last name"
+                id="formControlLg2"
+                type="text"
+                size="lg"
+              />
               <MDBInput
                 wrapperClass="mb-4 mx-5 w-100"
                 labelClass="text-dark"
                 label="Email address"
-                id="formControlLg"
+                id="formControlLg3"
                 type="email"
                 size="lg"
               />
@@ -57,35 +71,34 @@ function Login() {
                 wrapperClass="mb-4 mx-5 w-100"
                 labelClass="text-dark"
                 label="Password"
-                id="formControlLg"
+                id="formControlLg4"
                 type="password"
                 size="lg"
               />
-              <p className="small mb-3 pb-lg-2">
-                <a
-                  className="text-dark fw-bold"
-                  href="#!"
-                  style={{ textDecoration: "none", color: "#1E3A5F" }}
-                >
-                  Forgot password?
-                </a>
-              </p>
+              <MDBInput
+                wrapperClass="mb-4 mx-5 w-100"
+                labelClass="text-dark"
+                label="Confirm Password"
+                id="formControlLg5"
+                type="password"
+                size="lg"
+              />
               <MDBBtn
                 className="mx-2 px-5 w-100"
                 style={{ backgroundColor: "#1E3A5F", borderColor: "#1E3A5F" }}
                 size="lg"
               >
-                Login
+                Sign Up
               </MDBBtn>
               <div className="mt-4">
                 <p className="mb-0 text-center">
-                  Don't have an account?{" "}
+                  Already have an account?{" "}
                   <Link
-                    to="/signup"
+                    to="/"
                     className="fw-bold"
                     style={{ textDecoration: "none", color: "#1E3A5F" }}
                   >
-                    Sign Up
+                    Login
                   </Link>
                 </p>
               </div>
@@ -97,4 +110,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default SignUp;
