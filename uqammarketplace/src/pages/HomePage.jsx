@@ -1,10 +1,8 @@
-import { supabase } from '../utils/supabaseClient' 
 import { useMemo, useState } from "react";
 import MenuBar from "../components/MenuBar";
 import MenuBox from "../components/MenuBox";
 import { MENU_LIST } from "../utils/MenuList";
 
-console.log('Supabase connecté :', supabase)
 
 
 export default function HomePage() {
