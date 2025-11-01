@@ -37,7 +37,9 @@ function Login() {
           >
             <div
               style={{
-                backgroundColor: "#1E3A5F",
+                backgroundColor: "#4361ee",
+                border: "1px solid #4361ee",
+                color: "#ffffff",
                 height: "80px",
                 borderRadius: "1rem 1rem 0 0",
                 display: "flex",
@@ -79,7 +81,7 @@ function Login() {
               </p>
               <MDBBtn
                 className="mx-2 px-5 w-100"
-                style={{ backgroundColor: "#1E3A5F", borderColor: "#1E3A5F" }}
+                style={{ backgroundColor: "#4361ee", border: "1px solid #4361ee", color: "#ffffff", }}
                 size="lg"
                 onClick={handleLogin}
               >
@@ -92,7 +94,7 @@ function Login() {
                   <Link
                     to="/signup"
                     className="fw-bold"
-                    style={{ textDecoration: "none", color: "#1E3A5F" }}
+                    style={{ textDecoration: "none", color: "#4361ee" }}
                   >
                     Sign Up
                   </Link>
