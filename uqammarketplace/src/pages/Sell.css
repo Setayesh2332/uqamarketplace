@@ -133,13 +133,12 @@ fieldset > legend {
 }
 
 /* Actions */
-.actions {
+.form-actions{
     grid-column: 1 / -1;
     display: flex;
     justify-content: flex-end;
-    margin-top: 8px;
+    margin-top: 16px;
 }
-
 .btn-primary {
     appearance: none;
     border: none;

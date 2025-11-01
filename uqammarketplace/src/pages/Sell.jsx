@@ -253,7 +253,7 @@ export default function Sell() {
                         <div className="image-grid">
                             {images.map((img) => (
                                 <div key={img.id} className="image-card">
-                                    <img src={img.url} alt="aperçu" />
+                                    <img src={img.url} alt="aperçu"/>
                                     <button
                                         type="button"
                                         className="image-delete"
@@ -269,10 +269,8 @@ export default function Sell() {
                     )}
                 </div>
 
-                <div className="actions">
-                    <button type="submit" className="btn-primary">
-                        Sauvegarder
-                    </button>
+                <div className="form-actions">
+                    <button type="submit" className="btn-primary">Sauvegarder</button>
                 </div>
             </form>
         </div>
