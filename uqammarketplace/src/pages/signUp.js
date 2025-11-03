@@ -1,158 +1,86 @@
 import React from "react";
-import {
-  MDBBtn,
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBInput,
-} from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
+import { MDBContainer, MDBCard, MDBCardBody } from "mdb-react-ui-kit";
+import "./signUp.css";
 
 function SignUp() {
   return (
-    <MDBContainer
-      fluid
-      className="d-flex align-items-center justify-content-center"
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#E8F0F7",
-        paddingTop: "20px",
-        paddingBottom: "20px",
-      }}
-    >
-      <MDBRow className="w-100">
-        <MDBCol col="12" className="d-flex justify-content-center">
-          <MDBCard
-            className="text-dark my-5 mx-auto"
-            style={{
-              borderRadius: "1rem",
-              maxWidth: "500px",
-              backgroundColor: "#F5F5F5",
-              boxShadow: "0 10px 30px rgba(30, 58, 95, 0.15)",
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "#1E3A5F",
-                height: "80px",
-                borderRadius: "1rem 1rem 0 0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <h2 className="fw-bold mb-0 text-white">SIGN UP</h2>
+    <MDBContainer fluid className="signup-container">
+      <MDBCard className="signup-card">
+        <div className="signup-header">
+          <span className="signup-badge">Étudiant·e UQAM</span>
+          <h2>Créez votre compte marketplace</h2>
+          <p>Rejoignez la communauté pour publier des annonces, sauvegarder vos trouvailles et échanger avec d'autres étudiants.</p>
+        </div>
+
+        <MDBCardBody className="signup-body">
+          <form className="signup-form">
+            <div className="signup-grid">
+              <label className="signup-field">
+                <span>Prénom *</span>
+                <input type="text" name="firstName" placeholder="Ex. Amira" required />
+              </label>
+              <label className="signup-field">
+                <span>Nom *</span>
+                <input type="text" name="lastName" placeholder="Ex. Tremblay" required />
+              </label>
             </div>
-            <MDBCardBody className="p-5 d-flex flex-column align-items-center mx-auto w-100">
-              <p className="text-dark mb-5 text-center">Create your account!</p>
 
-              <MDBRow className="w-100">
-                <MDBCol md="6">
-                  <MDBInput
-                    wrapperClass="mb-4"
-                    labelClass="text-dark"
-                    label="First Name *"
-                    id="firstName"
-                    type="text"
-                    size="lg"
-                  />
-                </MDBCol>
-                <MDBCol md="6">
-                  <MDBInput
-                    wrapperClass="mb-4"
-                    labelClass="text-dark"
-                    label="Last Name *"
-                    id="lastName"
-                    type="text"
-                    size="lg"
-                  />
-                </MDBCol>
-              </MDBRow>
+            <label className="signup-field">
+              <span>Courriel UQAM *</span>
+              <input type="email" name="email" placeholder="prenom.nom@uqam.ca" required />
+            </label>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="UQAM Email *"
-                id="email"
-                type="email"
-                size="lg"
-                placeholder="example@uqam.ca"
-              />
+            <div className="signup-grid">
+              <label className="signup-field">
+                <span>Mot de passe *</span>
+                <input type="password" name="password" placeholder="Au moins 8 caractères" required />
+              </label>
+              <label className="signup-field">
+                <span>Confirmer *</span>
+                <input type="password" name="confirmPassword" placeholder="Répétez le mot de passe" required />
+              </label>
+            </div>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="Password *"
-                id="password"
-                type="password"
-                size="lg"
-              />
+            <div className="signup-grid">
+              <label className="signup-field">
+                <span>Cycle d'études *</span>
+                <select name="studyCycle" defaultValue="" required>
+                  <option value="" disabled>
+                    Choisissez votre cycle
+                  </option>
+                  <option value="bachelor">Baccalauréat</option>
+                  <option value="master">Maîtrise</option>
+                  <option value="phd">Doctorat</option>
+                  <option value="certificate">Certificat</option>
+                </select>
+              </label>
+              <label className="signup-field">
+                <span>Année scolaire *</span>
+                <select name="schoolYear" defaultValue="" required>
+                  <option value="" disabled>
+                    Sélectionnez votre année
+                  </option>
+                  <option value="1">1re année</option>
+                  <option value="2">2e année</option>
+                  <option value="3">3e année</option>
+                  <option value="4">4e année</option>
+                </select>
+              </label>
+            </div>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="Confirm Password *"
-                id="confirmPassword"
-                type="password"
-                size="lg"
-              />
+            <button type="submit" className="signup-submit">
+              S'inscrire
+            </button>
+          </form>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="Study Cycle *"
-                id="studyCycle"
-                type="select"
-                size="lg"
-              >
-                <option value="">Select Study Cycle</option>
-                <option value="bachelor">Bachelor</option>
-                <option value="master">Master</option>
-                <option value="phd">PhD</option>
-                <option value="certificate">Certificate</option>
-              </MDBInput>
-
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="School Year *"
-                id="schoolYear"
-                type="select"
-                size="lg"
-              >
-                <option value="">Select School Year</option>
-                <option value="1st">1st Year</option>
-                <option value="2nd">2nd Year</option>
-                <option value="3rd">3rd Year</option>
-                <option value="4th">4th Year</option>
-              </MDBInput>
-
-              <MDBBtn
-                className="mx-2 px-5 w-100"
-                style={{ backgroundColor: "#1E3A5F", borderColor: "#1E3A5F" }}
-                size="lg"
-              >
-                Sign Up
-              </MDBBtn>
-
-              <div className="mt-4">
-                <p className="mb-0 text-center">
-                  Already have an account?{" "}
-                  <Link
-                    to="/"
-                    className="fw-bold"
-                    style={{ textDecoration: "none", color: "#1E3A5F" }}
-                  >
-                    Login
-                  </Link>
-                </p>
-              </div>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-      </MDBRow>
+          <div className="signup-footer">
+            <p>
+              Déjà un compte? <Link to="/login">Connectez-vous</Link>
+            </p>
+          </div>
+        </MDBCardBody>
+      </MDBCard>
     </MDBContainer>
   );
 }
