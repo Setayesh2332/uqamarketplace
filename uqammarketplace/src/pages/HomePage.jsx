@@ -2,23 +2,21 @@ import { useMemo, useState } from "react";
 import MenuBar from "../components/MenuBar";
 import MenuBox from "../components/MenuBox";
 import { MENU_LIST } from "../utils/MenuList";
-
-
+import "./home.css";
 
 export default function HomePage() {
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState("prix_asc"); // 'prix_asc' | 'prix_desc' | 'recent'
+  const [sort, setSort] = useState("prix_asc");
 
   const items = useMemo(() => {
-    const arr = [];
+    const flat = [];
     for (const cat of MENU_LIST) {
       for (const ex of cat.examples) {
-        arr.push({ catLabel: cat.label, attributes: cat.attributes, example: ex });
+        flat.push({ catLabel: cat.label, attributes: cat.attributes, example: ex });
       }
     }
-    return arr;
+    return flat;
   }, []);
-
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -28,7 +26,6 @@ export default function HomePage() {
       return hay.includes(q);
     });
   }, [items, query]);
-
 
   const sorted = useMemo(() => {
     const copy = [...filtered];
@@ -47,31 +44,50 @@ export default function HomePage() {
   }, [filtered, sort]);
 
   return (
-    <>
+    <div className="home-shell">
       <MenuBar onSearch={setQuery} onSellClick={() => alert("Vendre (à brancher)")} />
 
-      <div className="container list-header">
-        <div />
-        <div className="list-filter">
-          <label htmlFor="sort">Filtre&nbsp;:</label>
-          <select id="sort" value={sort} onChange={(e) => setSort(e.target.value)}>
-            <option value="prix_asc">Prix le plus bas</option>
-            <option value="prix_desc">Prix le plus élevé</option>
-            <option value="recent">Plus récent</option>
-          </select>
-        </div>
-      </div>
+      <main className="home-main">
+        <section className="home-hero">
+          <div className="home-hero__content">
+            <span className="home-hero__badge">Marketplace étudiant</span>
+            <h1>Tout échanger sur le campus en un seul endroit.</h1>
+            <p>
+              Parcourez les manuels, services ou équipements proposés par la communauté UQAM.
+              Filtrez par prix ou fraîcheur pour trouver la bonne affaire.
+            </p>
+          </div>
+          <div className="home-hero__cta">
+            <button className="btn btn--primary" onClick={() => alert("Publier une annonce")}>Publier une annonce</button>
+            <button className="btn btn--ghost" onClick={() => alert("Voir mes favoris")}>Voir mes favoris</button>
+          </div>
+        </section>
 
-      <section className="container menu-grid">
-        {sorted.map(({ catLabel, attributes, example }, idx) => (
-          <MenuBox
-            key={catLabel + idx}
-            title={catLabel}
-            attributes={attributes}
-            example={example}
-          />
-        ))}
-      </section>
-    </>
+        <section className="home-toolbar">
+          <div className="home-toolbar__result">
+            {sorted.length} annonce{sorted.length > 1 ? "s" : ""} disponibles
+          </div>
+          <div className="home-toolbar__filter">
+            <label htmlFor="sort">Trier par</label>
+            <select id="sort" value={sort} onChange={(e) => setSort(e.target.value)}>
+              <option value="prix_asc">Prix le plus bas</option>
+              <option value="prix_desc">Prix le plus élevé</option>
+              <option value="recent">Plus récent</option>
+            </select>
+          </div>
+        </section>
+
+        <section className="home-grid">
+          {sorted.map(({ catLabel, attributes, example }, idx) => (
+            <MenuBox
+              key={catLabel + idx}
+              title={catLabel}
+              attributes={attributes}
+              example={example}
+            />
+          ))}
+        </section>
+      </main>
+    </div>
   );
 }

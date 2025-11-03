@@ -1,7 +1,24 @@
-import { FaSearch, FaUser } from "react-icons/fa";
+import { useState } from "react";
+import { FaPowerOff, FaSearch, FaUser } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function MenuBar({ onSearch, onSellClick }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const { signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    setMenuOpen(false);
+    try {
+      await signOut();
+      navigate("/login");
+    } catch (err) {
+      console.error("Unable to sign out", err);
+    }
+  };
+
   return (
     <header className="menubar-header">
       <div className="container menubar-header__row">
@@ -15,8 +32,27 @@ export default function MenuBar({ onSearch, onSellClick }) {
           <button className="btn btn--primary" onClick={onSellClick}>
             Vendre
           </button>
-          <button className="icon-user" aria-label="Profil utilisateur">
-            <FaUser />
+
+          <div className="header-avatar">
+            <button
+              className="icon-user"
+              aria-label="Profil utilisateur"
+              onClick={() => setMenuOpen((prev) => !prev)}
+            >
+              <FaUser />
+            </button>
+            {menuOpen && (
+              <div className="account-menu" role="menu">
+                <button className="account-menu__item" onClick={handleLogout} role="menuitem">
+                  Se déconnecter
+                </button>
+              </div>
+            )}
+          </div>
+
+          <button className="logout-inline" onClick={handleLogout}>
+            <FaPowerOff className="logout-inline__icon" />
+            <span>Se déconnecter</span>
           </button>
         </div>
       </div>
