@@ -1,0 +1,16 @@
+{
+  "name": "uqamarketplace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "UQAMarketplace - Plateforme d'échange pour les étudiants de l'UQAM",
+  "scripts": {
+    "install": "cd frontend && npm install",
+    "start": "cd frontend && npm start",
+    "build": "cd frontend && npm run build",
+    "test": "cd frontend && npm test"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  }
+}

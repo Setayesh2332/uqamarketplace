@@ -29,7 +29,40 @@ universitaire.
 
 ## Installation
 
+### Prérequis
+- Node.js (>= 16.0.0)
+- npm (>= 8.0.0)
+
+### Installation des dépendances
+
+Depuis la racine du projet :
+```bash
+npm install
+```
+
+Cette commande installera automatiquement les dépendances du frontend.
+
+### Structure du projet
+```
+.
+├── frontend/          # Application React
+├── package.json       # Scripts racine pour orchestrer le frontend
+└── README.md
+```
+
 ## Usage
+
+### Démarrer l'application
+
+Depuis la racine du projet :
+```bash
+npm start
+```
+
+**Scripts disponibles :**
+- `npm start` - Démarrer le frontend
+- `npm run build` - Construire le frontend pour la production
+- `npm test` - Exécuter les tests du frontend
 
 ## Auteurs
 Travail réalisé par:
