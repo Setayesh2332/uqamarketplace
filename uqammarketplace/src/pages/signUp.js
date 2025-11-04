@@ -1,158 +1,209 @@
-import React from "react";
-import {
-  MDBBtn,
-  MDBContainer,
-  MDBRow,
-  MDBCol,
-  MDBCard,
-  MDBCardBody,
-  MDBInput,
-} from "mdb-react-ui-kit";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { MDBContainer, MDBCard, MDBCardBody } from "mdb-react-ui-kit";
+import { useAuth } from "../contexts/AuthContext";
+import "./signUp.css";
+
+const initialForm = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+  studyCycle: "",
+  schoolYear: "",
+};
 
 function SignUp() {
+  const [form, setForm] = useState(initialForm);
+  const [status, setStatus] = useState({ submitting: false, error: "", success: "" });
+  const navigate = useNavigate();
+  const { signUp } = useAuth();
+
+  const updateField = (key) => (event) => {
+    setForm((prev) => ({ ...prev, [key]: event.target.value }));
+    setStatus((prev) => ({ ...prev, error: "" }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setStatus({ submitting: false, error: "", success: "" });
+
+    if (form.password !== form.confirmPassword) {
+      setStatus({ submitting: false, error: "Les mots de passe ne correspondent pas.", success: "" });
+      return;
+    }
+
+    setStatus({ submitting: true, error: "", success: "" });
+
+    try {
+      await signUp({
+        email: form.email,
+        password: form.password,
+        metadata: {
+          first_name: form.firstName,
+          last_name: form.lastName,
+          study_cycle: form.studyCycle,
+          school_year: form.schoolYear,
+        },
+      });
+
+      setStatus({
+        submitting: false,
+        error: "",
+        success: "Inscription réussie ! Redirection vers la connexion…",
+      });
+
+      setForm(initialForm);
+      setTimeout(() => navigate("/login"), 1500);
+    } catch (err) {
+      const code = err?.status;
+      const message = err?.message ?? "Impossible de créer votre compte pour le moment.";
+
+      if (code === 400 && message.toLowerCase().includes("confirm")) {
+        setStatus({
+          submitting: false,
+          error: "Votre adresse doit être confirmée avant la connexion. Consultez le lien reçu ou contactez l'équipe.",
+          success: "",
+        });
+      } else {
+        setStatus({ submitting: false, error: message, success: "" });
+      }
+    }
+  };
+
   return (
-    <MDBContainer
-      fluid
-      className="d-flex align-items-center justify-content-center"
-      style={{
-        minHeight: "100vh",
-        backgroundColor: "#E8F0F7",
-        paddingTop: "20px",
-        paddingBottom: "20px",
-      }}
-    >
-      <MDBRow className="w-100">
-        <MDBCol col="12" className="d-flex justify-content-center">
-          <MDBCard
-            className="text-dark my-5 mx-auto"
-            style={{
-              borderRadius: "1rem",
-              maxWidth: "500px",
-              backgroundColor: "#F5F5F5",
-              boxShadow: "0 10px 30px rgba(30, 58, 95, 0.15)",
-            }}
-          >
-            <div
-              style={{
-                backgroundColor: "#1E3A5F",
-                height: "80px",
-                borderRadius: "1rem 1rem 0 0",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <h2 className="fw-bold mb-0 text-white">SIGN UP</h2>
+    <MDBContainer fluid className="signup-container">
+      <MDBCard className="signup-card">
+        <div className="signup-header">
+          <span className="signup-badge">Étudiant·e UQAM</span>
+          <h2>Créez votre compte marketplace</h2>
+          <p>
+            Rejoignez la communauté pour publier des annonces, sauvegarder vos trouvailles et
+            échanger avec d'autres étudiants.
+          </p>
+        </div>
+
+        <MDBCardBody className="signup-body">
+          {status.error && <div className="signup-alert signup-alert--error">{status.error}</div>}
+          {status.success && <div className="signup-alert signup-alert--success">{status.success}</div>}
+
+          <form className="signup-form" onSubmit={handleSubmit} noValidate>
+            <div className="signup-grid">
+              <label className="signup-field">
+                <span>Prénom *</span>
+                <input
+                  type="text"
+                  name="firstName"
+                  placeholder="Ex. Amira"
+                  required
+                  value={form.firstName}
+                  onChange={updateField("firstName")}
+                />
+              </label>
+              <label className="signup-field">
+                <span>Nom *</span>
+                <input
+                  type="text"
+                  name="lastName"
+                  placeholder="Ex. Tremblay"
+                  required
+                  value={form.lastName}
+                  onChange={updateField("lastName")}
+                />
+              </label>
             </div>
-            <MDBCardBody className="p-5 d-flex flex-column align-items-center mx-auto w-100">
-              <p className="text-dark mb-5 text-center">Create your account!</p>
 
-              <MDBRow className="w-100">
-                <MDBCol md="6">
-                  <MDBInput
-                    wrapperClass="mb-4"
-                    labelClass="text-dark"
-                    label="First Name *"
-                    id="firstName"
-                    type="text"
-                    size="lg"
-                  />
-                </MDBCol>
-                <MDBCol md="6">
-                  <MDBInput
-                    wrapperClass="mb-4"
-                    labelClass="text-dark"
-                    label="Last Name *"
-                    id="lastName"
-                    type="text"
-                    size="lg"
-                  />
-                </MDBCol>
-              </MDBRow>
-
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="UQAM Email *"
-                id="email"
+            <label className="signup-field">
+              <span>Courriel UQAM *</span>
+              <input
                 type="email"
-                size="lg"
-                placeholder="example@uqam.ca"
+                name="email"
+                placeholder="prenom.nom@uqam.ca"
+                required
+                value={form.email}
+                onChange={updateField("email")}
               />
+            </label>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="Password *"
-                id="password"
-                type="password"
-                size="lg"
-              />
+            <div className="signup-grid">
+              <label className="signup-field">
+                <span>Mot de passe *</span>
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Au moins 8 caractères"
+                  required
+                  value={form.password}
+                  onChange={updateField("password")}
+                />
+              </label>
+              <label className="signup-field">
+                <span>Confirmer *</span>
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  placeholder="Répétez le mot de passe"
+                  required
+                  value={form.confirmPassword}
+                  onChange={updateField("confirmPassword")}
+                />
+              </label>
+            </div>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="Confirm Password *"
-                id="confirmPassword"
-                type="password"
-                size="lg"
-              />
+            <div className="signup-grid">
+              <label className="signup-field">
+                <span>Cycle d'études *</span>
+                <select
+                  name="studyCycle"
+                  required
+                  value={form.studyCycle}
+                  onChange={updateField("studyCycle")}
+                >
+                  <option value="" disabled>
+                    Choisissez votre cycle
+                  </option>
+                  <option value="bachelor">Baccalauréat</option>
+                  <option value="master">Maîtrise</option>
+                  <option value="phd">Doctorat</option>
+                  <option value="certificate">Certificat</option>
+                </select>
+              </label>
+              <label className="signup-field">
+                <span>Année scolaire *</span>
+                <select
+                  name="schoolYear"
+                  required
+                  value={form.schoolYear}
+                  onChange={updateField("schoolYear")}
+                >
+                  <option value="" disabled>
+                    Sélectionnez votre année
+                  </option>
+                  <option value="1">1re année</option>
+                  <option value="2">2e année</option>
+                  <option value="3">3e année</option>
+                  <option value="4">4e année</option>
+                </select>
+              </label>
+            </div>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="Study Cycle *"
-                id="studyCycle"
-                type="select"
-                size="lg"
-              >
-                <option value="">Select Study Cycle</option>
-                <option value="bachelor">Bachelor</option>
-                <option value="master">Master</option>
-                <option value="phd">PhD</option>
-                <option value="certificate">Certificate</option>
-              </MDBInput>
+            <button
+              type="submit"
+              className="signup-submit"
+              disabled={status.submitting}
+            >
+              {status.submitting ? "Inscription…" : "S'inscrire"}
+            </button>
+          </form>
 
-              <MDBInput
-                wrapperClass="mb-4 w-100"
-                labelClass="text-dark"
-                label="School Year *"
-                id="schoolYear"
-                type="select"
-                size="lg"
-              >
-                <option value="">Select School Year</option>
-                <option value="1st">1st Year</option>
-                <option value="2nd">2nd Year</option>
-                <option value="3rd">3rd Year</option>
-                <option value="4th">4th Year</option>
-              </MDBInput>
-
-              <MDBBtn
-                className="mx-2 px-5 w-100"
-                style={{ backgroundColor: "#1E3A5F", borderColor: "#1E3A5F" }}
-                size="lg"
-              >
-                Sign Up
-              </MDBBtn>
-
-              <div className="mt-4">
-                <p className="mb-0 text-center">
-                  Already have an account?{" "}
-                  <Link
-                    to="/"
-                    className="fw-bold"
-                    style={{ textDecoration: "none", color: "#1E3A5F" }}
-                  >
-                    Login
-                  </Link>
-                </p>
-              </div>
-            </MDBCardBody>
-          </MDBCard>
-        </MDBCol>
-      </MDBRow>
+          <div className="signup-footer">
+            <p>
+              Déjà un compte? <Link to="/login">Connectez-vous</Link>
+            </p>
+          </div>
+        </MDBCardBody>
+      </MDBCard>
     </MDBContainer>
   );
 }

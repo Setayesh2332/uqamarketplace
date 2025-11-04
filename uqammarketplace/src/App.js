@@ -1,23 +1,77 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login";
 import SignUp from "./pages/signUp";
 import Profile from "./pages/profile";
+import HomePage from "./pages/HomePage";
 import Sell from "./pages/Sell";
 import PublishSuccess from "./pages/PublishSuccess";
+import { AuthProvider, useAuth } from "./contexts/AuthContext";
+
+function ProtectedRoute({ children }) {
+  const { user, loading } = useAuth();
+  if (loading) {
+    return null;
+  }
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+}
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="/sell" element={<Sell />} />
-        <Route path="/publish-success" element={<PublishSuccess />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Page d'accueil protégée */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Auth */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+
+          {/* Profil */}
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Nouvelles pages (Dev) */}
+          <Route
+            path="/sell"
+            element={
+              <ProtectedRoute>
+                <Sell />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/publish-success"
+            element={
+              <ProtectedRoute>
+                <PublishSuccess />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Redirection */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
