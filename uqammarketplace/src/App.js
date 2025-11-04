@@ -1,10 +1,12 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login";
 import SignUp from "./pages/signUp";
 import Profile from "./pages/profile";
 import HomePage from "./pages/HomePage";
+import Sell from "./pages/Sell";
+import PublishSuccess from "./pages/PublishSuccess";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 
 function ProtectedRoute({ children }) {
@@ -15,15 +17,15 @@ function ProtectedRoute({ children }) {
   if (!user) {
     return <Navigate to="/login" replace />;
   }
-
   return children;
 }
 
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
+      <Router>
         <Routes>
+          {/* Page d'accueil protégée */}
           <Route
             path="/"
             element={
@@ -32,9 +34,12 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+
+          {/* Profil */}
           <Route
             path="/profile"
             element={
@@ -43,16 +48,29 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          {/* Nouvelles pages (Dev) */}
           <Route
-            path="/homepage"
+            path="/sell"
             element={
               <ProtectedRoute>
-                <HomePage />
+                <Sell />
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/publish-success"
+            element={
+              <ProtectedRoute>
+                <PublishSuccess />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Redirection */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </BrowserRouter>
+      </Router>
     </AuthProvider>
   );
 }
