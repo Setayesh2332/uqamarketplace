@@ -3,11 +3,13 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/login";
 import SignUp from "./pages/signUp";
+import VerifyEmail from "./pages/VerifyEmail";
 import Profile from "./pages/profile";
 import HomePage from "./pages/HomePage";
 import Sell from "./pages/Sell";
 import PublishSuccess from "./pages/PublishSuccess";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -22,9 +24,10 @@ function ProtectedRoute({ children }) {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <Routes>
+    <LanguageProvider>
+      <AuthProvider>
+        <Router>
+          <Routes>
           {/* Page d'accueil protégée */}
           <Route
             path="/"
@@ -38,6 +41,7 @@ function App() {
           {/* Auth */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
 
           {/* Profil */}
           <Route
@@ -69,9 +73,10 @@ function App() {
 
           {/* Redirection */}
           <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Router>
-    </AuthProvider>
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </LanguageProvider>
   );
 }
 

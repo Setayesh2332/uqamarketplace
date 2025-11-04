@@ -38,12 +38,15 @@ export function AuthProvider({ children }) {
   }, []);
 
   const signUp = useCallback(async ({ email, password, metadata }) => {
+    // Obtenir l'origine actuelle pour construire l'URL de redirection
+    const redirectUrl = `${window.location.origin}/verify-email`;
+    
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: metadata,
-        emailRedirectTo: undefined,
+        emailRedirectTo: redirectUrl,
         shouldCreateUser: true,
       },
     });
