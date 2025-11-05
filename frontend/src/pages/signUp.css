@@ -113,6 +113,61 @@
   outline: none;
 }
 
+.signup-password-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.signup-password-wrapper input {
+  padding-right: 3rem;
+}
+
+.signup-password-toggle {
+  position: absolute;
+  right: 1rem;
+  background: none;
+  border: none;
+  color: #8792a2;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  outline: none;
+  z-index: 1;
+}
+
+.signup-password-toggle:hover {
+  color: #4361ee;
+}
+
+.signup-password-toggle:focus {
+  color: #4361ee;
+  outline: 2px solid rgba(67, 97, 238, 0.3);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.signup-password-toggle svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: inherit;
+  display: block;
+}
+
+.signup-input-error {
+  border-color: #d32f2f !important;
+  background: #fff5f5 !important;
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.1) !important;
+}
+
+.signup-input-error:focus {
+  border-color: #d32f2f !important;
+  box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.18) !important;
+}
+
 .signup-field select {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg width='16' height='10' viewBox='0 0 16 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1.333 1.667L8 8.333l6.667-6.666' stroke='%233361FF' stroke-width='2' fill='none' stroke-linecap='round' /%3E%3C/svg%3E");
@@ -131,6 +186,17 @@
 
 .signup-field select:invalid {
   color: #95a0b5;
+}
+
+.signup-error-message {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: #d32f2f !important;
+  font-weight: 500;
+  line-height: 1.4;
+  text-transform: none !important;
+  letter-spacing: normal !important;
 }
 
 .signup-submit {

@@ -1,16 +1,13 @@
-import { useState } from "react";
 import { FaPowerOff, FaSearch, FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../contexts/AuthContext";
 
 export default function MenuBar({ onSearch, onSellClick }) {
-  const [menuOpen, setMenuOpen] = useState(false);
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    setMenuOpen(false);
     try {
       await signOut();
       navigate("/login");
@@ -23,7 +20,7 @@ export default function MenuBar({ onSearch, onSellClick }) {
     <header className="menubar-header">
       <div className="container menubar-header__row">
         <div className="brand">
-          <span className="brand__text">UQAMMarketplace</span>
+          <span className="brand__text">UQAMarketplace</span>
         </div>
 
         <SearchBar onSearch={onSearch} icon={<FaSearch />} />
@@ -37,17 +34,10 @@ export default function MenuBar({ onSearch, onSellClick }) {
             <button
               className="icon-user"
               aria-label="Profil utilisateur"
-              onClick={() => setMenuOpen((prev) => !prev)}
+              onClick={() => navigate("/profile")}
             >
               <FaUser />
             </button>
-            {menuOpen && (
-              <div className="account-menu" role="menu">
-                <button className="account-menu__item" onClick={handleLogout} role="menuitem">
-                  Se déconnecter
-                </button>
-              </div>
-            )}
           </div>
 
           <button className="logout-inline" onClick={handleLogout}>
