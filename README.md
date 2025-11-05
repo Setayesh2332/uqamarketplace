@@ -27,9 +27,8 @@ universitaire.
 - Base de données : Supabase (s’occupe de l’authentification, backend et base de donnee)
 - Stockage d’images : Supabase
 
-## Installation
-
 ## Usage
+La branche Dev est celle utilise et a jour pour le sprint 1. 
 
 ## Auteurs
 Travail réalisé par:
@@ -50,3 +49,8 @@ Travail réalisé par:
 ## Projet statut
 - Tp3 Sprint # 1 fini dans la branche dev.
 - Tp3 Sprint # 2 debut
+
+## But de l'itération Sprint 1
+- En tant qu’étudiant de l’UQAM, on peut s’authentifier avec
+notre domaine de l’uqam (soit @courrier.uqam.ca, @uqam.ca ou bien
+@ens.uqam.ca) ainsi que créer, modifier ou supprimer des annonces.
