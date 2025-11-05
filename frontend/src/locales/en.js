@@ -1,4 +1,4 @@
-export default {
+const enTranslations = {
   login: {
     title: "Login",
     description: "Sign in to access your listings and messages.",
@@ -9,16 +9,18 @@ export default {
     submitting: "Signing in…",
     newUser: "New to the platform?",
     createAccount: "Create an account",
-    registrationSuccess: "Registration successful! Check your email to confirm your account.",
+    registrationSuccess:
+      "Registration successful! Check your email to confirm your account.",
     error: "An error occurred during sign in.",
     errorInvalidCredentials: "Incorrect email or password.",
-    errorTooManyRequests: "Too many attempts. Please try again in a few moments.",
+    errorTooManyRequests:
+      "Too many attempts. Please try again in a few moments.",
   },
-
   signup: {
     title: "Create your UQAMarketplace account",
     badge: "UQAM Student",
-    description: "Join the community to post listings, save your finds and exchange with other students.",
+    description:
+      "Join the community to post listings, save your finds and exchange with other students.",
     firstName: "First name *",
     lastName: "Last name *",
     email: "UQAM Email *",
@@ -34,10 +36,10 @@ export default {
     error: "Please correct the errors in the form.",
     selectStudyCycle: "Choose your cycle",
     selectSchoolYear: "Select your year",
-    passwordPlaceholder: "Min. 8 characters, uppercase, lowercase, digit, symbol",
+    passwordPlaceholder:
+      "Min. 8 characters, uppercase, lowercase, digit, symbol",
     confirmPasswordPlaceholder: "Repeat the password",
   },
-
   validation: {
     required: "This field is required",
     nameMaxLength: "Name cannot exceed 50 characters",
@@ -54,23 +56,21 @@ export default {
     selectField: (fieldName) => `Please select ${fieldName}`,
     formErrors: "Please correct the errors in the form.",
     accountCreationError: "Unable to create your account at this time.",
-    emailConfirmationRequired: "Your email address must be confirmed before signing in. Check the link received or contact the team.",
+    emailConfirmationRequired:
+      "Your email address must be confirmed before signing in. Check the link received or contact the team.",
   },
-
   studyCycles: {
     bachelor: "Bachelor",
     master: "Master",
     phd: "PhD",
     certificate: "Certificate",
   },
-
   schoolYears: {
     1: "1st year",
     2: "2nd year",
     3: "3rd year",
     4: "4th year",
   },
-
   verifyEmail: {
     verifying: "Verifying...",
     verified: "Email confirmed!",
@@ -78,9 +78,11 @@ export default {
     verifyingMessage: "Verifying your email...",
     successMessage: "Your email has been successfully confirmed!",
     redirecting: "Redirecting to homepage...",
-    invalidLink: "Invalid or expired confirmation link. Please request a new link.",
+    invalidLink:
+      "Invalid or expired confirmation link. Please request a new link.",
     backToLogin: "Back to login",
     genericError: "An error occurred while verifying the email.",
   },
 };
 
+export default enTranslations;

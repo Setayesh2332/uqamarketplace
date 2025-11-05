@@ -72,7 +72,7 @@ const validatePassword = (password, t) => {
   if (!/[0-9]/.test(password)) {
     return t("validation.passwordDigit");
   }
-  if (!/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password)) {
+  if (!/[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/.test(password)) {
     return t("validation.passwordSymbol");
   }
   return "";
@@ -101,10 +101,16 @@ function SignUp() {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState(initialErrors);
   const [touched, setTouched] = useState({});
-  const [status, setStatus] = useState({ submitting: false, error: "", success: "" });
+  const [status, setStatus] = useState({
+    submitting: false,
+    error: "",
+    success: "",
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [animationClass, setAnimationClass] = useState("auth-card-enter-from-left");
+  const [animationClass, setAnimationClass] = useState(
+    "auth-card-enter-from-left"
+  );
   const navigate = useNavigate();
   const { signUp } = useAuth();
 
@@ -120,18 +126,18 @@ function SignUp() {
 
   const updateField = (key) => (event) => {
     let value = event.target.value;
-    
+
     if (key === "firstName" || key === "lastName") {
       value = value.replace(/[^a-zA-ZÀ-ÿ\s-]/g, "");
       if (value.length > 50) {
         value = value.substring(0, 50);
       }
     }
-    
+
     setForm((prev) => ({ ...prev, [key]: value }));
-    
+
     setStatus((prev) => ({ ...prev, error: "" }));
-    
+
     if (touched[key]) {
       validateField(key, value);
     }
@@ -144,7 +150,7 @@ function SignUp() {
 
   const validateField = (key, value) => {
     let error = "";
-    
+
     switch (key) {
       case "firstName":
         error = validateName(value, t);
@@ -158,7 +164,11 @@ function SignUp() {
       case "password":
         error = validatePassword(value, t);
         if (form.confirmPassword && !error) {
-          const confirmError = validatePasswordMatch(value, form.confirmPassword, t);
+          const confirmError = validatePasswordMatch(
+            value,
+            form.confirmPassword,
+            t
+          );
           setErrors((prev) => ({ ...prev, confirmPassword: confirmError }));
         }
         break;
@@ -166,15 +176,23 @@ function SignUp() {
         error = validatePasswordMatch(form.password, value, t);
         break;
       case "studyCycle":
-        error = validateSelect(value, t("signup.studyCycle").replace("*", "").trim().toLowerCase(), t);
+        error = validateSelect(
+          value,
+          t("signup.studyCycle").replace("*", "").trim().toLowerCase(),
+          t
+        );
         break;
       case "schoolYear":
-        error = validateSelect(value, t("signup.schoolYear").replace("*", "").trim().toLowerCase(), t);
+        error = validateSelect(
+          value,
+          t("signup.schoolYear").replace("*", "").trim().toLowerCase(),
+          t
+        );
         break;
       default:
         break;
     }
-    
+
     setErrors((prev) => ({ ...prev, [key]: error }));
     return error === "";
   };
@@ -270,7 +288,7 @@ function SignUp() {
             marginBottom: "24px",
           }}
         />
-        
+
         <MDBCard className={`signup-card auth-card ${animationClass}`}>
           <div className="signup-header">
             <span className="signup-badge">{t("signup.badge")}</span>
@@ -278,177 +296,241 @@ function SignUp() {
             <p>{t("signup.description")}</p>
           </div>
 
-        <MDBCardBody className="signup-body">
-          {status.error && <div className="signup-alert signup-alert--error">{status.error}</div>}
-          {status.success && <div className="signup-alert signup-alert--success">{status.success}</div>}
+          <MDBCardBody className="signup-body">
+            {status.error && (
+              <div className="signup-alert signup-alert--error">
+                {status.error}
+              </div>
+            )}
+            {status.success && (
+              <div className="signup-alert signup-alert--success">
+                {status.success}
+              </div>
+            )}
 
-          <form className="signup-form" onSubmit={handleSubmit} noValidate>
-            <div className="signup-grid">
-              <label className="signup-field">
-                <span>{t("signup.firstName")}</span>
-                <input
-                  type="text"
-                  name="firstName"
-                  placeholder="Ex. Amira"
-                  maxLength={50}
-                  value={form.firstName}
-                  onChange={updateField("firstName")}
-                  onBlur={handleBlur("firstName")}
-                  className={touched.firstName && errors.firstName ? "signup-input-error" : ""}
-                />
-                {touched.firstName && errors.firstName && (
-                  <span className="signup-error-message">{errors.firstName}</span>
-                )}
-              </label>
-              <label className="signup-field">
-                <span>{t("signup.lastName")}</span>
-                <input
-                  type="text"
-                  name="lastName"
-                  placeholder="Ex. Tremblay"
-                  maxLength={50}
-                  value={form.lastName}
-                  onChange={updateField("lastName")}
-                  onBlur={handleBlur("lastName")}
-                  className={touched.lastName && errors.lastName ? "signup-input-error" : ""}
-                />
-                {touched.lastName && errors.lastName && (
-                  <span className="signup-error-message">{errors.lastName}</span>
-                )}
-              </label>
-            </div>
-
-            <label className="signup-field">
-              <span>{t("signup.email")}</span>
-              <input
-                type="email"
-                name="email"
-                placeholder="prenom.nom@uqam.ca"
-                value={form.email}
-                onChange={updateField("email")}
-                onBlur={handleBlur("email")}
-                className={touched.email && errors.email ? "signup-input-error" : ""}
-              />
-              {touched.email && errors.email && (
-                <span className="signup-error-message">{errors.email}</span>
-              )}
-            </label>
-
-            <div className="signup-grid">
-              <label className="signup-field">
-                <span>{t("signup.password")}</span>
-                <div className="signup-password-wrapper">
+            <form className="signup-form" onSubmit={handleSubmit} noValidate>
+              <div className="signup-grid">
+                <label className="signup-field">
+                  <span>{t("signup.firstName")}</span>
                   <input
-                    type={showPassword ? "text" : "password"}
-                    name="password"
-                    placeholder={t("signup.passwordPlaceholder")}
-                    value={form.password}
-                    onChange={updateField("password")}
-                    onBlur={handleBlur("password")}
-                    className={touched.password && errors.password ? "signup-input-error" : ""}
+                    type="text"
+                    name="firstName"
+                    placeholder="Ex. Amira"
+                    maxLength={50}
+                    value={form.firstName}
+                    onChange={updateField("firstName")}
+                    onBlur={handleBlur("firstName")}
+                    className={
+                      touched.firstName && errors.firstName
+                        ? "signup-input-error"
+                        : ""
+                    }
                   />
-                  <button
-                    type="button"
-                    className="signup-password-toggle"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-                  >
-                    {showPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-                {touched.password && errors.password && (
-                  <span className="signup-error-message">{errors.password}</span>
-                )}
-              </label>
-              <label className="signup-field">
-                <span>{t("signup.confirmPassword")}</span>
-                <div className="signup-password-wrapper">
+                  {touched.firstName && errors.firstName && (
+                    <span className="signup-error-message">
+                      {errors.firstName}
+                    </span>
+                  )}
+                </label>
+                <label className="signup-field">
+                  <span>{t("signup.lastName")}</span>
                   <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    name="confirmPassword"
-                    placeholder={t("signup.confirmPasswordPlaceholder")}
-                    value={form.confirmPassword}
-                    onChange={updateField("confirmPassword")}
-                    onBlur={handleBlur("confirmPassword")}
-                    className={touched.confirmPassword && errors.confirmPassword ? "signup-input-error" : ""}
+                    type="text"
+                    name="lastName"
+                    placeholder="Ex. Tremblay"
+                    maxLength={50}
+                    value={form.lastName}
+                    onChange={updateField("lastName")}
+                    onBlur={handleBlur("lastName")}
+                    className={
+                      touched.lastName && errors.lastName
+                        ? "signup-input-error"
+                        : ""
+                    }
                   />
-                  <button
-                    type="button"
-                    className="signup-password-toggle"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                    aria-label={showConfirmPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+                  {touched.lastName && errors.lastName && (
+                    <span className="signup-error-message">
+                      {errors.lastName}
+                    </span>
+                  )}
+                </label>
+              </div>
+
+              <label className="signup-field">
+                <span>{t("signup.email")}</span>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="prenom.nom@uqam.ca"
+                  value={form.email}
+                  onChange={updateField("email")}
+                  onBlur={handleBlur("email")}
+                  className={
+                    touched.email && errors.email ? "signup-input-error" : ""
+                  }
+                />
+                {touched.email && errors.email && (
+                  <span className="signup-error-message">{errors.email}</span>
+                )}
+              </label>
+
+              <div className="signup-grid">
+                <label className="signup-field">
+                  <span>{t("signup.password")}</span>
+                  <div className="signup-password-wrapper">
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      name="password"
+                      placeholder={t("signup.passwordPlaceholder")}
+                      value={form.password}
+                      onChange={updateField("password")}
+                      onBlur={handleBlur("password")}
+                      className={
+                        touched.password && errors.password
+                          ? "signup-input-error"
+                          : ""
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="signup-password-toggle"
+                      onClick={() => setShowPassword(!showPassword)}
+                      aria-label={
+                        showPassword
+                          ? "Masquer le mot de passe"
+                          : "Afficher le mot de passe"
+                      }
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                  {touched.password && errors.password && (
+                    <span className="signup-error-message">
+                      {errors.password}
+                    </span>
+                  )}
+                </label>
+                <label className="signup-field">
+                  <span>{t("signup.confirmPassword")}</span>
+                  <div className="signup-password-wrapper">
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      name="confirmPassword"
+                      placeholder={t("signup.confirmPasswordPlaceholder")}
+                      value={form.confirmPassword}
+                      onChange={updateField("confirmPassword")}
+                      onBlur={handleBlur("confirmPassword")}
+                      className={
+                        touched.confirmPassword && errors.confirmPassword
+                          ? "signup-input-error"
+                          : ""
+                      }
+                    />
+                    <button
+                      type="button"
+                      className="signup-password-toggle"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      aria-label={
+                        showConfirmPassword
+                          ? "Masquer le mot de passe"
+                          : "Afficher le mot de passe"
+                      }
+                    >
+                      {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  </div>
+                  {touched.confirmPassword && errors.confirmPassword && (
+                    <span className="signup-error-message">
+                      {errors.confirmPassword}
+                    </span>
+                  )}
+                </label>
+              </div>
+
+              <div className="signup-grid">
+                <label className="signup-field">
+                  <span>{t("signup.studyCycle")}</span>
+                  <select
+                    name="studyCycle"
+                    value={form.studyCycle}
+                    onChange={updateField("studyCycle")}
+                    onBlur={handleBlur("studyCycle")}
+                    className={
+                      touched.studyCycle && errors.studyCycle
+                        ? "signup-input-error"
+                        : ""
+                    }
                   >
-                    {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
-                  </button>
-                </div>
-                {touched.confirmPassword && errors.confirmPassword && (
-                  <span className="signup-error-message">{errors.confirmPassword}</span>
-                )}
-              </label>
+                    <option value="" disabled hidden>
+                      {t("signup.selectStudyCycle")}
+                    </option>
+                    <option value="bachelor">
+                      {t("studyCycles.bachelor")}
+                    </option>
+                    <option value="master">{t("studyCycles.master")}</option>
+                    <option value="phd">{t("studyCycles.phd")}</option>
+                    <option value="certificate">
+                      {t("studyCycles.certificate")}
+                    </option>
+                  </select>
+                  {touched.studyCycle && errors.studyCycle && (
+                    <span className="signup-error-message">
+                      {errors.studyCycle}
+                    </span>
+                  )}
+                </label>
+                <label className="signup-field">
+                  <span>{t("signup.schoolYear")}</span>
+                  <select
+                    name="schoolYear"
+                    value={form.schoolYear}
+                    onChange={updateField("schoolYear")}
+                    onBlur={handleBlur("schoolYear")}
+                    className={
+                      touched.schoolYear && errors.schoolYear
+                        ? "signup-input-error"
+                        : ""
+                    }
+                  >
+                    <option value="" disabled hidden>
+                      {t("signup.selectSchoolYear")}
+                    </option>
+                    <option value="1">{t("schoolYears.1")}</option>
+                    <option value="2">{t("schoolYears.2")}</option>
+                    <option value="3">{t("schoolYears.3")}</option>
+                    <option value="4">{t("schoolYears.4")}</option>
+                  </select>
+                  {touched.schoolYear && errors.schoolYear && (
+                    <span className="signup-error-message">
+                      {errors.schoolYear}
+                    </span>
+                  )}
+                </label>
+              </div>
+
+              <button
+                type="submit"
+                className="signup-submit"
+                disabled={status.submitting}
+              >
+                {status.submitting
+                  ? t("signup.submitting")
+                  : t("signup.submitButton")}
+              </button>
+            </form>
+
+            <div className="signup-footer">
+              <p>
+                {t("signup.alreadyHaveAccount")}{" "}
+                <Link to="/login" state={{ from: "signup" }}>
+                  {t("signup.loginLink")}
+                </Link>
+              </p>
             </div>
-
-            <div className="signup-grid">
-              <label className="signup-field">
-                <span>{t("signup.studyCycle")}</span>
-                <select
-                  name="studyCycle"
-                  value={form.studyCycle}
-                  onChange={updateField("studyCycle")}
-                  onBlur={handleBlur("studyCycle")}
-                  className={touched.studyCycle && errors.studyCycle ? "signup-input-error" : ""}
-                >
-                  <option value="" disabled hidden>
-                    {t("signup.selectStudyCycle")}
-                  </option>
-                  <option value="bachelor">{t("studyCycles.bachelor")}</option>
-                  <option value="master">{t("studyCycles.master")}</option>
-                  <option value="phd">{t("studyCycles.phd")}</option>
-                  <option value="certificate">{t("studyCycles.certificate")}</option>
-                </select>
-                {touched.studyCycle && errors.studyCycle && (
-                  <span className="signup-error-message">{errors.studyCycle}</span>
-                )}
-              </label>
-              <label className="signup-field">
-                <span>{t("signup.schoolYear")}</span>
-                <select
-                  name="schoolYear"
-                  value={form.schoolYear}
-                  onChange={updateField("schoolYear")}
-                  onBlur={handleBlur("schoolYear")}
-                  className={touched.schoolYear && errors.schoolYear ? "signup-input-error" : ""}
-                >
-                  <option value="" disabled hidden>
-                    {t("signup.selectSchoolYear")}
-                  </option>
-                  <option value="1">{t("schoolYears.1")}</option>
-                  <option value="2">{t("schoolYears.2")}</option>
-                  <option value="3">{t("schoolYears.3")}</option>
-                  <option value="4">{t("schoolYears.4")}</option>
-                </select>
-                {touched.schoolYear && errors.schoolYear && (
-                  <span className="signup-error-message">{errors.schoolYear}</span>
-                )}
-              </label>
-            </div>
-
-            <button
-              type="submit"
-              className="signup-submit"
-              disabled={status.submitting}
-            >
-              {status.submitting ? t("signup.submitting") : t("signup.submitButton")}
-            </button>
-          </form>
-
-          <div className="signup-footer">
-            <p>
-              {t("signup.alreadyHaveAccount")}{" "}
-              <Link to="/login" state={{ from: "signup" }}>{t("signup.loginLink")}</Link>
-            </p>
-          </div>
-        </MDBCardBody>
-      </MDBCard>
+          </MDBCardBody>
+        </MDBCard>
       </div>
     </MDBContainer>
   );

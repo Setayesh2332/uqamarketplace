@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { MDBContainer, MDBCard, MDBCardBody, MDBSpinner } from "mdb-react-ui-kit";
+import { useNavigate } from "react-router-dom";
+import {
+  MDBContainer,
+  MDBCard,
+  MDBCardBody,
+  MDBSpinner,
+} from "mdb-react-ui-kit";
 import { supabase } from "../utils/supabaseClient";
 import "./VerifyEmail.css";
 
 function VerifyEmail() {
-  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [status, setStatus] = useState({
     loading: true,
@@ -49,7 +53,7 @@ function VerifyEmail() {
           // Si aucun jeton dans le hash, vérifier si l'utilisateur est déjà authentifié
           // (peut avoir cliqué sur le lien deux fois ou déjà vérifié)
           const { data: sessionData } = await supabase.auth.getSession();
-          
+
           if (sessionData.session) {
             // L'utilisateur est déjà connecté, probablement déjà vérifié
             setStatus({
@@ -62,14 +66,18 @@ function VerifyEmail() {
               navigate("/", { replace: true });
             }, 2000);
           } else {
-            throw new Error("Lien de confirmation invalide ou expiré. Veuillez demander un nouveau lien.");
+            throw new Error(
+              "Lien de confirmation invalide ou expiré. Veuillez demander un nouveau lien."
+            );
           }
         }
       } catch (err) {
         setStatus({
           loading: false,
           success: false,
-          error: err?.message ?? "Une erreur est survenue lors de la vérification de l'email.",
+          error:
+            err?.message ??
+            "Une erreur est survenue lors de la vérification de l'email.",
         });
       }
     };
@@ -94,8 +102,14 @@ function VerifyEmail() {
       >
         <div
           style={{
-            backgroundColor: status.success ? "#2d8659" : status.error ? "#d32f2f" : "#4361ee",
-            border: `1px solid ${status.success ? "#2d8659" : status.error ? "#d32f2f" : "#4361ee"}`,
+            backgroundColor: status.success
+              ? "#2d8659"
+              : status.error
+              ? "#d32f2f"
+              : "#4361ee",
+            border: `1px solid ${
+              status.success ? "#2d8659" : status.error ? "#d32f2f" : "#4361ee"
+            }`,
             color: "#ffffff",
             height: "80px",
             borderRadius: "1rem 1rem 0 0",
@@ -105,16 +119,23 @@ function VerifyEmail() {
           }}
         >
           <h2 className="fw-bold mb-0 text-white">
-            {status.loading ? "Vérification en cours..." : status.success ? "Email confirmé !" : "Erreur"}
+            {status.loading
+              ? "Vérification en cours..."
+              : status.success
+              ? "Email confirmé !"
+              : "Erreur"}
           </h2>
         </div>
+
         <MDBCardBody className="p-5 d-flex flex-column align-items-center">
           {status.loading && (
             <div className="text-center">
               <MDBSpinner role="status" className="mb-4">
                 <span className="visually-hidden">Chargement...</span>
               </MDBSpinner>
-              <p className="text-dark mb-0">Vérification de votre email en cours...</p>
+              <p className="text-dark mb-0">
+                Vérification de votre email en cours...
+              </p>
             </div>
           )}
 
@@ -168,4 +189,3 @@ function VerifyEmail() {
 }
 
 export default VerifyEmail;
-

@@ -8,7 +8,7 @@ export default function MenuBox({ title, example, attributes, locale = "fr" }) {
     return attributes
       .filter((key) => example[key] !== undefined && key !== "image")
       .map((key) => [getAttributeLabel(key, locale), example[key]]);
-  }, [attributes, example]);
+  }, [attributes, example, locale]); // ✅ AJOUT: locale ajouté aux dépendances
 
   // Si non étendu, on montre les 4 premiers
   const visible = expanded ? orderedPairs : orderedPairs.slice(0, 4);
@@ -23,7 +23,6 @@ export default function MenuBox({ title, example, attributes, locale = "fr" }) {
       {/* Section infos (droite) */}
       <div className="menu-box__info">
         <h3 className="menu-box__title">{example.titre || title}</h3>
-
         <dl className="menu-box__fields">
           {visible.map(([key, value]) => (
             <div className="field" key={key}>

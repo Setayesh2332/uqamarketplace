@@ -1,0 +1,22 @@
+.brand-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-btn:hover .brand__text {
+  opacity: 0.8;
+}
+
+.brand-btn:active {
+  transform: scale(0.98);
+}
+
+.brand__text {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
