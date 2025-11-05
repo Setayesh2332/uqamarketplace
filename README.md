@@ -48,4 +48,5 @@ Travail réalisé par:
 - Page wiki Tp2 equipe 8 pdf disponible
 
 ## Projet statut
-- Tp3 Sprint # 1 en cours
+- Tp3 Sprint # 1 fini dans la branche dev.
+- Tp3 Sprint # 2 debut
