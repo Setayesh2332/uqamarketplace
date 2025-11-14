@@ -1,63 +1,132 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import MenuBar from "../components/MenuBar";
 import MenuBox from "../components/MenuBox";
-import { MENU_LIST } from "../utils/MenuList";
+import { getListings } from "../utils/listingsApi";
 import "./home.css";
 
+// Mapper les catégories aux attributs basé sur la structure MenuList
+const CATEGORY_ATTRIBUTES = {
+  "Manuel scolaire": ["titre", "cours", "prix", "condition", "description", "vendeur", "datePublication"],
+  "Électronique": ["titre", "marque", "prix", "condition", "description", "vendeur"],
+  "Meubles": ["titre", "type", "prix", "condition", "description", "vendeur"],
+  "Vêtements": ["titre", "taille", "genre", "prix", "condition", "description", "vendeur"],
+  "Autre": ["titre", "prix", "condition", "description", "vendeur"],
+};
+
 export default function HomePage() {
+  const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("prix_asc");
+  const [listings, setListings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const items = useMemo(() => {
-    const flat = [];
-    for (const cat of MENU_LIST) {
-      for (const ex of cat.examples) {
-        flat.push({
-          catLabel: cat.label,
-          attributes: cat.attributes,
-          example: ex,
-        });
+  // Récupérer les annonces depuis l'API
+  useEffect(() => {
+    const fetchListings = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        // Mapper les options de tri au format API
+        let sortField = "created_at";
+        let sortOrder = "desc";
+        
+        if (sort === "prix_asc") {
+          sortField = "price";
+          sortOrder = "asc";
+        } else if (sort === "prix_desc") {
+          sortField = "price";
+          sortOrder = "desc";
+        } else if (sort === "recent") {
+          sortField = "created_at";
+          sortOrder = "desc";
+        }
+
+        const filters = {
+          status: "active",
+        };
+
+        if (query.trim()) {
+          filters.search = query.trim();
+        }
+
+        const { listings: fetchedListings } = await getListings(
+          filters,
+          { field: sortField, order: sortOrder },
+          100 // Limite
+        );
+
+        setListings(fetchedListings || []);
+      } catch (err) {
+        console.error("Erreur lors de la récupération des annonces:", err);
+        setError("Erreur lors du chargement des annonces");
+      } finally {
+        setLoading(false);
       }
-    }
-    return flat;
-  }, []);
+    };
 
-  const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return items;
-    return items.filter(({ example }) => {
-      const hay = `${example.titre ?? ""} ${example.description ?? ""} ${
-        example.vendeur ?? ""
-      }`.toLowerCase();
-      return hay.includes(q);
+    fetchListings();
+  }, [query, sort]);
+
+  // Transformer les annonces de la base de données au format MenuBox
+  const items = useMemo(() => {
+    return listings.map((listing) => {
+      // Obtenir le nom du vendeur
+      const sellerName = listing.profiles
+        ? `${listing.profiles.first_name} ${listing.profiles.last_name}`.trim() || listing.profiles.email
+        : "Vendeur inconnu";
+
+      // Obtenir la première image ou une image de remplacement
+      const imageUrl =
+        listing.listing_images && listing.listing_images.length > 0
+          ? listing.listing_images[0].path
+          : "https://picsum.photos/480/320?placeholder";
+
+      // Formater la date
+      const datePublication = listing.created_at
+        ? new Date(listing.created_at).toISOString().split("T")[0]
+        : null;
+
+      // Obtenir les attributs spécifiques à la catégorie
+      const categoryAttrs = listing.category_attributes || {};
+      
+      // Construire l'objet example
+      const example = {
+        image: imageUrl,
+        titre: listing.title,
+        prix: listing.price,
+        condition: listing.condition,
+        description: listing.description || "",
+        vendeur: sellerName,
+        datePublication: datePublication,
+        // Ajouter les attributs spécifiques à la catégorie
+        ...(listing.category === "Manuel scolaire" && { cours: listing.course || "" }),
+        ...(listing.category === "Électronique" && { marque: categoryAttrs.marque || "" }),
+        ...(listing.category === "Meubles" && { type: categoryAttrs.type || "" }),
+        ...(listing.category === "Vêtements" && {
+          taille: categoryAttrs.taille || "",
+          genre: categoryAttrs.genre || "",
+        }),
+      };
+
+      // Obtenir les attributs pour cette catégorie
+      const attributes = CATEGORY_ATTRIBUTES[listing.category] || CATEGORY_ATTRIBUTES["Autre"];
+
+      return {
+        id: listing.id,
+        catLabel: listing.category,
+        attributes: attributes,
+        example: example,
+      };
     });
-  }, [items, query]);
-
-  const sorted = useMemo(() => {
-    const copy = [...filtered];
-    if (sort === "prix_asc") {
-      copy.sort(
-        (a, b) => (a.example.prix ?? Infinity) - (b.example.prix ?? Infinity)
-      );
-    } else if (sort === "prix_desc") {
-      copy.sort(
-        (a, b) => (b.example.prix ?? -Infinity) - (a.example.prix ?? -Infinity)
-      );
-    } else if (sort === "recent") {
-      copy.sort((a, b) => {
-        const da = Date.parse(a.example.datePublication ?? "1970-01-01");
-        const db = Date.parse(b.example.datePublication ?? "1970-01-01");
-        return db - da;
-      });
-    }
-    return copy;
-  }, [filtered, sort]);
+  }, [listings]);
 
   return (
     <div className="home-shell">
       <MenuBar
         onSearch={setQuery}
-        onSellClick={() => alert("Vendre (à brancher)")}
+        onSellClick={() => navigate("/sell")}
       />
 
       <main className="home-main">
@@ -75,7 +144,13 @@ export default function HomePage() {
 
         <section className="home-toolbar">
           <div className="home-toolbar__result">
-            {sorted.length} annonce{sorted.length > 1 ? "s" : ""} disponibles
+            {loading ? (
+              "Chargement..."
+            ) : error ? (
+              <span style={{ color: "#c33" }}>{error}</span>
+            ) : (
+              `${items.length} annonce${items.length > 1 ? "s" : ""} disponible${items.length > 1 ? "s" : ""}`
+            )}
           </div>
           <div className="home-toolbar__filter">
             <label htmlFor="sort">Trier par</label>
@@ -83,6 +158,7 @@ export default function HomePage() {
               id="sort"
               value={sort}
               onChange={(e) => setSort(e.target.value)}
+              disabled={loading}
             >
               <option value="prix_asc">Prix le plus bas</option>
               <option value="prix_desc">Prix le plus élevé</option>
@@ -91,16 +167,30 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="home-grid">
-          {sorted.map(({ catLabel, attributes, example }, idx) => (
-            <MenuBox
-              key={catLabel + idx}
-              title={catLabel}
-              attributes={attributes}
-              example={example}
-            />
-          ))}
-        </section>
+        {loading ? (
+          <section className="home-grid" style={{ padding: "2rem", textAlign: "center" }}>
+            <p>Chargement des annonces...</p>
+          </section>
+        ) : error ? (
+          <section className="home-grid" style={{ padding: "2rem", textAlign: "center" }}>
+            <p style={{ color: "#c33" }}>{error}</p>
+          </section>
+        ) : items.length === 0 ? (
+          <section className="home-grid" style={{ padding: "2rem", textAlign: "center" }}>
+            <p>Aucune annonce disponible pour le moment.</p>
+          </section>
+        ) : (
+          <section className="home-grid">
+            {items.map(({ id, catLabel, attributes, example }) => (
+              <MenuBox
+                key={id}
+                title={catLabel}
+                attributes={attributes}
+                example={example}
+              />
+            ))}
+          </section>
+        )}
       </main>
     </div>
   );
