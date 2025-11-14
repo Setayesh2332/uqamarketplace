@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { getAttributeLabel } from "../utils/attributesLabels";
 
-export default function MenuBox({ title, example, attributes, locale = "fr" }) {
+export default function MenuBox({ title, example, attributes, locale = "fr", onMessage }) {
   const [expanded, setExpanded] = useState(false);
 
   const orderedPairs = useMemo(() => {
@@ -32,14 +32,27 @@ export default function MenuBox({ title, example, attributes, locale = "fr" }) {
           ))}
         </dl>
 
-        {orderedPairs.length > 4 && (
-          <button
-            className="btn btn--ghost"
-            onClick={() => setExpanded((prev) => !prev)}
-          >
-            {expanded ? "Voir moins" : "Voir plus"}
-          </button>
-        )}
+        <div className="menu-box__actions">
+          {orderedPairs.length > 4 && (
+            <button
+              className="btn btn--ghost"
+              type="button"
+              onClick={() => setExpanded((prev) => !prev)}
+            >
+              {expanded ? "Voir moins" : "Voir plus"}
+            </button>
+          )}
+
+          {onMessage && (
+            <button
+              className="btn btn--primary"
+              type="button"
+              onClick={onMessage}
+            >
+              Contacter le vendeur
+            </button>
+          )}
+        </div>
       </div>
     </article>
   );

@@ -352,6 +352,13 @@
   color: #1e2a44;
 }
 
+.home-shell .menu-box__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: auto;
+}
+
 @media (max-width: 920px) {
   .home-shell .menu-box {
     grid-template-columns: 1fr;
