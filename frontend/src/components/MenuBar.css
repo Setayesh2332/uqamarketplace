@@ -1,22 +1,131 @@
+.menubar-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+}
+
+.menubar-header__row {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+/* Brand */
 .brand-btn {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.brand-btn:hover .brand__text {
-  opacity: 0.8;
-}
-
-.brand-btn:active {
-  transform: scale(0.98);
 }
 
 .brand__text {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  font-size: 1.35rem;
+  letter-spacing: 0.14em;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1e3a5f;
+}
+
+/* Desktop placement: Search takes the center row */
+.menubar-header__row .searchbar {
+  flex: 1 1 auto;
+  min-width: 350px;
+}
+
+/* Action buttons row */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Vendre button */
+.btn--primary {
+  background: #2b6bf3;
+  color: white;
+  padding: 0.6rem 1.3rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  box-shadow: 0 10px 24px rgba(43, 107, 243, 0.35);
+  cursor: pointer;
+}
+
+/* Profile icon */
+.icon-user {
+  width: 44px;
+  height: 44px;
+  background: rgba(67, 97, 238, 0.15);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #1e3a5f;
+  font-size: 1.1rem;
+}
+
+/* Logout icon */
+.logout-icon-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(255, 0, 0, 0.1);
+  border: 2px solid rgba(255, 0, 0, 0.75);
+  color: #d62828;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.logout-icon-btn:hover {
+  background: rgba(255, 0, 0, 0.18);
+}
+
+@media (max-width: 1024px) {
+  .menubar-header__row {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .menubar-header__row .searchbar {
+    min-width: 100%;
+    order: 3;
+  }
+}
+
+@media (max-width: 100px) {
+  /* Center everything */
+  .menubar-header__row {
+    justify-content: center;
+  }
+
+  .brand {
+    width: 100%;
+    text-align: center;
+  }
+
+  .brand-btn {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  .menubar-header__row .searchbar {
+    width: 100%;
+    order: 3;
+  }
 }
