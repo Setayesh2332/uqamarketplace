@@ -190,11 +190,11 @@
 .detail-image-main {
     border-radius: 18px;
     overflow: hidden;
-    background: #f3f4f8;         /* light background behind photo */
+    background: #f3f4f8;
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 380px;               /* same height as before */
+    height: 380px;
 }
 
 .detail-image-main img {
@@ -202,7 +202,7 @@
     max-height: 100%;
     width: auto;
     height: auto;
-    object-fit: contain;         /* ✅ show whole image, no cropping */
+    object-fit: contain;         /* show whole image, no cropping */
 }
 
 
