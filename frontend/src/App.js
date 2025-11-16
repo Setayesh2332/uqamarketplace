@@ -8,76 +8,89 @@ import Profile from "./pages/profile";
 import HomePage from "./pages/HomePage";
 import Sell from "./pages/Sell";
 import PublishSuccess from "./pages/PublishSuccess";
+import ListingDetail from "./pages/ListingDetail";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 
 function ProtectedRoute({ children }) {
-  const { user, loading } = useAuth();
-  if (loading) {
-    return null;
-  }
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  return children;
+    const { user, loading } = useAuth();
+    if (loading) {
+        return null;
+    }
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
+    return children;
 }
 
 function App() {
-  return (
-    <LanguageProvider>
-      <AuthProvider>
-        <Router>
-          <Routes>
-          {/* Page d'accueil protégée */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <HomePage />
-              </ProtectedRoute>
-            }
-          />
+    return (
+        <LanguageProvider>
+            <AuthProvider>
+                <Router>
+                    <Routes>
+                        {/* Page d'accueil protégée */}
+                        <Route
+                            path="/"
+                            element={
+                                <ProtectedRoute>
+                                    <HomePage />
+                                </ProtectedRoute>
+                            }
+                        />
 
-          {/* Auth */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/verify-email" element={<VerifyEmail />} />
+                        {/* Auth */}
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<SignUp />} />
+                        <Route path="/verify-email" element={<VerifyEmail />} />
 
-          {/* Profil */}
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+                        {/* Profil */}
+                        <Route
+                            path="/profile"
+                            element={
+                                <ProtectedRoute>
+                                    <Profile />
+                                </ProtectedRoute>
+                            }
+                        />
 
-          {/* Nouvelles pages (Dev) */}
-          <Route
-            path="/sell"
-            element={
-              <ProtectedRoute>
-                <Sell />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/publish-success"
-            element={
-              <ProtectedRoute>
-                <PublishSuccess />
-              </ProtectedRoute>
-            }
-          />
+                        {/* Vendre */}
+                        <Route
+                            path="/sell"
+                            element={
+                                <ProtectedRoute>
+                                    <Sell />
+                                </ProtectedRoute>
+                            }
+                        />
 
-          {/* Redirection */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Router>
-      </AuthProvider>
-    </LanguageProvider>
-  );
+                        {/* Détails d'une annonce */}
+                        <Route
+                            path="/listing/:id"
+                            element={
+                                <ProtectedRoute>
+                                    <ListingDetail />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        {/* Page de succès après publication */}
+                        <Route
+                            path="/publish-success"
+                            element={
+                                <ProtectedRoute>
+                                    <PublishSuccess />
+                                </ProtectedRoute>
+                            }
+                        />
+
+                        {/* Redirection par défaut */}
+                        <Route path="*" element={<Navigate to="/" replace />} />
+                    </Routes>
+                </Router>
+            </AuthProvider>
+        </LanguageProvider>
+    );
 }
 
 export default App;

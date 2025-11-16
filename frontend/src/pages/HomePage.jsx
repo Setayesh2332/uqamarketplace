@@ -184,6 +184,7 @@ export default function HomePage() {
             {items.map(({ id, catLabel, attributes, example }) => (
               <MenuBox
                 key={id}
+                id={id}
                 title={catLabel}
                 attributes={attributes}
                 example={example}
