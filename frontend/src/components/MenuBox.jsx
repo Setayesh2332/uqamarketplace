@@ -1,17 +1,21 @@
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { getAttributeLabel } from "../utils/attributesLabels";
 
-export default function MenuBox({ title, example, attributes, locale = "fr" }) {
-  const [expanded, setExpanded] = useState(false);
+export default function MenuBox({ id, title, example, attributes, locale = "fr" }) {
+  const navigate = useNavigate();
 
   const orderedPairs = useMemo(() => {
     return attributes
       .filter((key) => example[key] !== undefined && key !== "image")
       .map((key) => [getAttributeLabel(key, locale), example[key]]);
-  }, [attributes, example, locale]); // ✅ AJOUT: locale ajouté aux dépendances
+  }, [attributes, example, locale]);
 
   // Si non étendu, on montre les 4 premiers
-  const visible = expanded ? orderedPairs : orderedPairs.slice(0, 4);
+  const visible = orderedPairs.slice(0, 4);
+  const handleVoirPlus = () => {
+      navigate(`/listing/${id}`);
+  };
 
   return (
     <article className="menu-box">
@@ -31,15 +35,12 @@ export default function MenuBox({ title, example, attributes, locale = "fr" }) {
             </div>
           ))}
         </dl>
-
-        {orderedPairs.length > 4 && (
-          <button
-            className="btn btn--ghost"
-            onClick={() => setExpanded((prev) => !prev)}
-          >
-            {expanded ? "Voir moins" : "Voir plus"}
-          </button>
-        )}
+        <button
+            className="btn btn--ghost menu-box__more"
+            onClick={handleVoirPlus}
+        >
+            Voir plus
+        </button>
       </div>
     </article>
   );
