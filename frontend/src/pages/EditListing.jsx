@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import MenuBar from "../components/MenuBar";
-import { createListing } from "../utils/listingsApi";
+import { getListingById, updateListing } from "../utils/listingsApi";
 import "./Sell.css";
 
-export default function Sell() {
+export default function EditListing() {
   const navigate = useNavigate();
+  const { id } = useParams();
   const [form, setForm] = useState({
     category: "Choisir",
     program: "",
@@ -14,11 +15,10 @@ export default function Sell() {
     condition: "Choisir",
     description: "",
     price: "",
-    // Attributs spécifiques par catégorie
-    marque: "", // Pour Électronique
-    type: "", // Pour Meubles
-    taille: "", // Pour Vêtements
-    genre: "", // Pour Vêtements
+    marque: "",
+    type: "",
+    taille: "",
+    genre: "",
     contact_cell: false,
     contact_email: false,
     contact_other: false,
@@ -27,98 +27,114 @@ export default function Sell() {
     otherContact: "",
   });
 
-  const [images, setImages] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
+
+  useEffect(() => {
+    loadListing();
+  }, [id]);
+
+  const loadListing = async () => {
+    try {
+      setLoading(true);
+      const listing = await getListingById(id);
+      
+      // Remplir le formulaire avec les données existantes
+      const categoryAttrs = listing.category_attributes || {};
+      setForm({
+        category: listing.category || "Choisir",
+        program: listing.program || "",
+        course: listing.course || "",
+        title: listing.title || "",
+        condition: listing.condition || "Choisir",
+        description: listing.description || "",
+        price: listing.price?.toString() || "",
+        marque: categoryAttrs.marque || "",
+        type: categoryAttrs.type || "",
+        taille: categoryAttrs.taille || "",
+        genre: categoryAttrs.genre || "",
+        contact_cell: listing.contact_cell || false,
+        contact_email: listing.contact_email || false,
+        contact_other: listing.contact_other || false,
+        phone: listing.contact_phone || "",
+        email: listing.contact_email_value || "",
+        otherContact: listing.contact_other_value || "",
+      });
+    } catch (err) {
+      console.error("Erreur lors du chargement de l'annonce:", err);
+      setError("Impossible de charger l'annonce");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const setField = (key, value) => setForm((f) => ({ ...f, [key]: value }));
   const handleCheck = (key) => (e) => setField(key, e.target.checked);
 
-  const handleImages = (e) => {
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-
-    const next = files.map((file) => ({
-      id: crypto.randomUUID(),
-      file,
-      url: URL.createObjectURL(file),
-    }));
-    setImages((prev) => [...prev, ...next]);
-    e.target.value = "";
-  };
-
-  const removeImage = (id) => {
-    setImages((prev) => {
-      const toRevoke = prev.find((im) => im.id === id);
-      if (toRevoke) URL.revokeObjectURL(toRevoke.url);
-      return prev.filter((im) => im.id !== id);
-    });
-  };
-
   const onSubmit = async (e) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
+    setSaving(true);
 
     // Validation
     if (form.category === "Choisir") {
       setError("Veuillez sélectionner une catégorie");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
     if (form.condition === "Choisir") {
       setError("Veuillez sélectionner l'état de l'article");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
     if (!form.title.trim()) {
       setError("Veuillez entrer un titre");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
     if (form.title.trim().length > 150) {
       setError("Le titre ne doit pas dépasser 150 caractères");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
     if (form.description.trim().length > 2000) {
       setError("La description ne doit pas dépasser 2000 caractères");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
     if (!form.price.trim() || isNaN(parseFloat(form.price)) || parseFloat(form.price) <= 0) {
       setError("Veuillez entrer un prix valide (supérieur à 0)");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
-    // Valider les informations de contact
     if (form.contact_cell && !form.phone.trim()) {
       setError("Veuillez entrer un numéro de téléphone");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
     if (form.contact_email && !form.email.trim()) {
       setError("Veuillez entrer une adresse courriel");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
     if (form.contact_other && !form.otherContact.trim()) {
       setError("Veuillez entrer les informations de contact");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
     if (!form.contact_cell && !form.contact_email && !form.contact_other) {
       setError("Veuillez sélectionner au moins un mode de contact");
-      setLoading(false);
+      setSaving(false);
       return;
     }
 
@@ -137,23 +153,30 @@ export default function Sell() {
         if (form.genre) categoryAttributes.genre = form.genre.trim();
       }
 
-      const imageFiles = images.map((img) => img.file);
+      const updates = {
+        category: form.category,
+        program: form.program || null,
+        course: form.course || null,
+        title: form.title.trim(),
+        condition: form.condition,
+        description: form.description.trim() || null,
+        price: parseFloat(form.price),
+        contact_cell: form.contact_cell,
+        contact_email: form.contact_email,
+        contact_other: form.contact_other,
+        contact_phone: form.contact_cell ? form.phone.trim() : null,
+        contact_email_value: form.contact_email ? form.email.trim() : null,
+        contact_other_value: form.contact_other ? form.otherContact.trim() : null,
+        category_attributes: categoryAttributes,
+      };
 
-      const listing = await createListing(
-        {
-          ...form,
-          category_attributes: categoryAttributes,
-        },
-        imageFiles
-      );
-
-      navigate("/publish-success", { state: { listing } });
+      await updateListing(id, updates);
+      alert("Annonce mise à jour avec succès !");
+      navigate("/my-listings");
     } catch (err) {
-      console.error("Erreur lors de la création de l'annonce:", err);
-      setError(
-        err.message || "Une erreur est survenue lors de la création de l'annonce"
-      );
-      setLoading(false);
+      console.error("Erreur lors de la mise à jour:", err);
+      setError(err.message || "Une erreur est survenue lors de la mise à jour");
+      setSaving(false);
     }
   };
 
@@ -168,22 +191,40 @@ export default function Sell() {
 
   const CONDITIONS = ["Choisir", "Neuf", "Comme neuf", "Bon", "Acceptable"];
 
+  if (loading) {
+    return (
+      <div className="sell-shell">
+        <MenuBar onSearch={() => {}} onSellClick={() => {}} />
+        <main className="sell-main">
+          <div className="sell-container">
+            <p style={{ textAlign: "center", padding: "2rem" }}>
+              Chargement de l'annonce...
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   return (
     <div className="sell-shell">
-      <MenuBar onSearch={() => { }} onSellClick={() => { }} />
+      <MenuBar onSearch={() => {}} onSellClick={() => {}} />
 
       <main className="sell-main">
         <div className="sell-container">
-          <h1 className="sell-title">Vendre un article</h1>
+          <h1 className="sell-title">Modifier l'annonce</h1>
 
           {error && (
-            <div className="error-message" style={{
-              padding: "1rem",
-              marginBottom: "1rem",
-              backgroundColor: "#fee",
-              color: "#c33",
-              borderRadius: "4px"
-            }}>
+            <div
+              className="error-message"
+              style={{
+                padding: "1rem",
+                marginBottom: "1rem",
+                backgroundColor: "#fee",
+                color: "#c33",
+                borderRadius: "4px",
+              }}
+            >
               {error}
             </div>
           )}
@@ -251,7 +292,6 @@ export default function Sell() {
               </select>
             </div>
 
-            {/* Champs spécifiques selon la catégorie */}
             {form.category === "Électronique" && (
               <div className="form-row">
                 <label>Marque :</label>
@@ -389,42 +429,21 @@ export default function Sell() {
               </div>
             </fieldset>
 
-            <div className="form-row form-row--full">
-              <label>Télécharger des photos :</label>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleImages}
-                className="file-input"
-              />
-              {images.length > 0 && (
-                <div className="image-grid">
-                  {images.map((img) => (
-                    <div key={img.id} className="image-card">
-                      <img src={img.url} alt="aperçu" />
-                      <button
-                        type="button"
-                        className="image-delete"
-                        onClick={() => removeImage(img.id)}
-                        aria-label="Supprimer cette image"
-                        title="Supprimer"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
             <div className="form-actions">
+              <button
+                type="button"
+                className="btn-secondary"
+                onClick={() => navigate("/my-listings")}
+                disabled={saving}
+              >
+                Annuler
+              </button>
               <button
                 type="submit"
                 className="btn-primary"
-                disabled={loading}
+                disabled={saving}
               >
-                {loading ? "Publication en cours..." : "Sauvegarder"}
+                {saving ? "Mise à jour en cours..." : "Enregistrer les modifications"}
               </button>
             </div>
           </form>

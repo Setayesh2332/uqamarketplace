@@ -8,6 +8,9 @@ import Profile from "./pages/profile";
 import HomePage from "./pages/HomePage";
 import Sell from "./pages/Sell";
 import PublishSuccess from "./pages/PublishSuccess";
+import CategoryPage from "./pages/CategoryPage";
+import MyListings from "./pages/MyListings";
+import EditListing from "./pages/EditListing";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 
@@ -67,6 +70,34 @@ function App() {
             element={
               <ProtectedRoute>
                 <PublishSuccess />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Annonces par catégorie */}
+          <Route
+            path="/annonces/:category"
+            element={
+              <ProtectedRoute>
+                <CategoryPage />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Gestion des annonces */}
+          <Route
+            path="/my-listings"
+            element={
+              <ProtectedRoute>
+                <MyListings />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/edit-listing/:id"
+            element={
+              <ProtectedRoute>
+                <EditListing />
               </ProtectedRoute>
             }
           />

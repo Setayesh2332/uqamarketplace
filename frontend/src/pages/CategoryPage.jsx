@@ -1,37 +1,52 @@
 import { useMemo, useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import MenuBar from "../components/MenuBar";
 import MenuBox from "../components/MenuBox";
 import { getListings } from "../utils/listingsApi";
 import "./home.css";
 
-// Mapper les catégories aux attributs basé sur la structure MenuList
+// Mapper les catégories URL aux catégories DB
+const CATEGORY_MAP = {
+  "manuels": "Manuel scolaire",
+  "electronique": "Électronique",
+  "meubles": "Meubles",
+  "vetements": "Vêtements",
+  "services": "Services",
+  "autre": "Autre"
+};
+
 const CATEGORY_ATTRIBUTES = {
   "Manuel scolaire": ["titre", "cours", "prix", "condition", "description", "vendeur", "datePublication"],
   "Électronique": ["titre", "marque", "prix", "condition", "description", "vendeur"],
   "Meubles": ["titre", "type", "prix", "condition", "description", "vendeur"],
   "Vêtements": ["titre", "taille", "genre", "prix", "condition", "description", "vendeur"],
+  "Services": ["titre", "typeService", "tarifHoraire", "description", "vendeur", "disponibilite"],
   "Autre": ["titre", "prix", "condition", "description", "vendeur"],
 };
 
-export default function HomePage() {
+export default function CategoryPage() {
   const navigate = useNavigate();
+  const { category: categoryParam } = useParams();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("prix_asc");
-  const [minPrice, setMinPrice] = useState("");
-  const [maxPrice, setMaxPrice] = useState("");
-  const [condition, setCondition] = useState("");
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Récupérer les annonces depuis l'API
+  // Convertir le paramètre URL en catégorie DB
+  const category = CATEGORY_MAP[categoryParam] || null;
+
   useEffect(() => {
+    if (!category) {
+      setError("Catégorie non reconnue");
+      setLoading(false);
+      return;
+    }
+
     const fetchListings = async () => {
       setLoading(true);
       setError(null);
       try {
-        // Mapper les options de tri au format API
         let sortField = "created_at";
         let sortOrder = "desc";
         
@@ -48,28 +63,17 @@ export default function HomePage() {
 
         const filters = {
           status: "active",
+          category: category, // Filtre par catégorie
         };
 
         if (query.trim()) {
           filters.search = query.trim();
         }
 
-        if (minPrice && !isNaN(parseFloat(minPrice))) {
-          filters.min_price = parseFloat(minPrice);
-        }
-
-        if (maxPrice && !isNaN(parseFloat(maxPrice))) {
-          filters.max_price = parseFloat(maxPrice);
-        }
-
-        if (condition && condition !== "Tous") {
-          filters.condition = condition;
-        }
-
         const { listings: fetchedListings } = await getListings(
           filters,
           { field: sortField, order: sortOrder },
-          100 // Limite
+          100
         );
 
         setListings(fetchedListings || []);
@@ -82,31 +86,25 @@ export default function HomePage() {
     };
 
     fetchListings();
-  }, [query, sort, minPrice, maxPrice, condition]);
+  }, [query, sort, category]);
 
-  // Transformer les annonces de la base de données au format MenuBox
   const items = useMemo(() => {
     return listings.map((listing) => {
-      // Obtenir le nom du vendeur
       const sellerName = listing.profiles
         ? `${listing.profiles.first_name} ${listing.profiles.last_name}`.trim() || listing.profiles.email
         : "Vendeur inconnu";
 
-      // Obtenir la première image ou une image de remplacement
       const imageUrl =
         listing.listing_images && listing.listing_images.length > 0
           ? listing.listing_images[0].path
           : "https://picsum.photos/480/320?placeholder";
 
-      // Formater la date
       const datePublication = listing.created_at
         ? new Date(listing.created_at).toISOString().split("T")[0]
         : null;
 
-      // Obtenir les attributs spécifiques à la catégorie
       const categoryAttrs = listing.category_attributes || {};
       
-      // Construire l'objet example
       const example = {
         image: imageUrl,
         titre: listing.title,
@@ -115,7 +113,6 @@ export default function HomePage() {
         description: listing.description || "",
         vendeur: sellerName,
         datePublication: datePublication,
-        // Ajouter les attributs spécifiques à la catégorie
         ...(listing.category === "Manuel scolaire" && { cours: listing.course || "" }),
         ...(listing.category === "Électronique" && { marque: categoryAttrs.marque || "" }),
         ...(listing.category === "Meubles" && { type: categoryAttrs.type || "" }),
@@ -123,9 +120,13 @@ export default function HomePage() {
           taille: categoryAttrs.taille || "",
           genre: categoryAttrs.genre || "",
         }),
+        ...(listing.category === "Services" && {
+          typeService: categoryAttrs.typeService || "",
+          tarifHoraire: categoryAttrs.tarifHoraire || "",
+          disponibilite: categoryAttrs.disponibilite || "",
+        }),
       };
 
-      // Obtenir les attributs pour cette catégorie
       const attributes = CATEGORY_ATTRIBUTES[listing.category] || CATEGORY_ATTRIBUTES["Autre"];
 
       return {
@@ -147,12 +148,11 @@ export default function HomePage() {
       <main className="home-main">
         <section className="home-hero">
           <div className="home-hero__content">
-            <span className="home-hero__badge">Marketplace étudiant</span>
-            <h1>Tout échanger sur le campus en un seul endroit.</h1>
+            <span className="home-hero__badge">{category || "Catégorie"}</span>
+            <h1>Annonces dans la catégorie {category}</h1>
             <p>
-              Parcourez les manuels, services ou équipements proposés par la
-              communauté UQAM. Filtrez par prix ou fraîcheur pour trouver la
-              bonne affaire.
+              Parcourez les annonces de la catégorie {category}. 
+              Utilisez la recherche et les filtres pour affiner vos résultats.
             </p>
           </div>
         </section>
@@ -182,64 +182,6 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="home-filters">
-          <div className="filters-container">
-            <div className="filter-group">
-              <label htmlFor="minPrice">Prix minimum</label>
-              <input
-                id="minPrice"
-                type="number"
-                placeholder="0"
-                min="0"
-                value={minPrice}
-                onChange={(e) => setMinPrice(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-            
-            <div className="filter-group">
-              <label htmlFor="maxPrice">Prix maximum</label>
-              <input
-                id="maxPrice"
-                type="number"
-                placeholder="10000"
-                min="0"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(e.target.value)}
-                disabled={loading}
-              />
-            </div>
-
-            <div className="filter-group">
-              <label htmlFor="condition">État</label>
-              <select
-                id="condition"
-                value={condition}
-                onChange={(e) => setCondition(e.target.value)}
-                disabled={loading}
-              >
-                <option value="">Tous</option>
-                <option value="Neuf">Neuf</option>
-                <option value="Comme neuf">Comme neuf</option>
-                <option value="Bon">Bon</option>
-                <option value="Acceptable">Acceptable</option>
-              </select>
-            </div>
-
-            <button
-              className="filter-reset"
-              onClick={() => {
-                setMinPrice("");
-                setMaxPrice("");
-                setCondition("");
-              }}
-              disabled={loading || (!minPrice && !maxPrice && !condition)}
-            >
-              Réinitialiser les filtres
-            </button>
-          </div>
-        </section>
-
         {loading ? (
           <section className="home-grid" style={{ padding: "2rem", textAlign: "center" }}>
             <p>Chargement des annonces...</p>
@@ -250,7 +192,7 @@ export default function HomePage() {
           </section>
         ) : items.length === 0 ? (
           <section className="home-grid" style={{ padding: "2rem", textAlign: "center" }}>
-            <p>Aucune annonce disponible pour le moment.</p>
+            <p>Aucune annonce disponible dans cette catégorie.</p>
           </section>
         ) : (
           <section className="home-grid">

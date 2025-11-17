@@ -1,9 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { FaEdit, FaBox, FaHeart, FaSave, FaTimes } from "react-icons/fa";
 import MenuBar from "../components/MenuBar";
 import "./profile.css";
 
 function Profile() {
+  const navigate = useNavigate();
   const [isEditing, setIsEditing] = useState(false);
   const [user, setUser] = useState({
     firstName: "John",
@@ -43,12 +45,14 @@ function Profile() {
       icon: <FaBox />,
       title: "Mes Annonces",
       description: "Consultez vos annonces publiées",
+      link: "/my-listings",
     },
     {
       id: 2,
       icon: <FaHeart />,
       title: "Favoris",
       description: "Vos articles sauvegardés",
+      link: "#",
     },
   ];
 
@@ -211,7 +215,16 @@ function Profile() {
                 <div className="profile-action-icon">{card.icon}</div>
                 <h3 className="profile-action-title">{card.title}</h3>
                 <p className="profile-action-description">{card.description}</p>
-                <button className="profile-action-btn">Voir</button>
+                <button 
+                  className="profile-action-btn"
+                  onClick={() => {
+                    if (card.link && card.link !== "#") {
+                      navigate(card.link);
+                    }
+                  }}
+                >
+                  Voir
+                </button>
               </div>
             ))}
           </div>
