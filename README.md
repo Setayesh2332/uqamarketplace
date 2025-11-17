@@ -55,7 +55,22 @@ notre domaine de l’uqam (soit @courrier.uqam.ca, @uqam.ca ou bien
 @ens.uqam.ca) ainsi que créer, modifier ou supprimer des annonces.
 
 ## But de l'itération Sprint 2
+- Voir et mettre des articles en ventes, Recherche avancée (catégories + filtres) et ajustements des bogues et de l'interface utilisateur.
 
-## Apercu de l'interface 
+### Apercu de l'interface utilisateur
 
+#### Page de connexion
 
+![Screenshot 1](images/77FE2A25-2257-4124-81E3-D5BC175D5432.png)
+
+#### Confirmation du compte uqam par email uqam (authentification) avec Supabase
+
+![Screenshot 2](images/2B477107-6520-49A6-96EF-F5D32302BBB3.png)
+
+#### Mise en vente d'un article avec les criteres d'acceptations
+
+![Screenshot 3](images/519E8154-4E82-494F-B1ED-55DCE594F87E.png)
+
+#### Page des annonces
+
+![Screenshot 4](images/0D0FEF48-A696-4571-8240-E636D9F37FF6.png)
