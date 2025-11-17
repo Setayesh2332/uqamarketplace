@@ -55,3 +55,7 @@ notre domaine de l’uqam (soit @courrier.uqam.ca, @uqam.ca ou bien
 @ens.uqam.ca) ainsi que créer, modifier ou supprimer des annonces.
 
 ## But de l'itération Sprint 2
+
+## Apercu de l'interface 
+
+
