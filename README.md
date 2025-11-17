@@ -1,4 +1,4 @@
-# INF6150_DINA_HOUDA_SETAYESH_AYMEN_ADEL
+# INF6150 UQAMARKETPLACE Équipe  #8
 
 ## Objectif de projet 
 Notre équipe a choisi de travailler cette session sur un projet intitulé « UQAMarketplace
@@ -28,12 +28,11 @@ universitaire.
 - Stockage d’images : Supabase
 
 ## Usage
-La branche Dev est celle utilise et a jour pour le sprint 1. 
+La branche Dev est celle utilise et a jour pour le sprint 2. 
 
 ## Auteurs
 Travail réalisé par:
 
-- Équipe 8
 - Abbasi Moghadam, Setayesh
 - Benalia, Aymen
 - Benmohammed, Dina Mahdia
@@ -47,10 +46,12 @@ Travail réalisé par:
 - Page wiki Tp2 equipe 8 pdf disponible
 
 ## Projet statut
-- Tp3 Sprint # 1 fini dans la branche dev.
-- Tp3 Sprint # 2 debut
+- Tp3 Sprint # 1 fini dans la branche dev et publie dans le wiki
+- Tp3 Sprint # 2 en cours dans la branche dev et les branches sprint 2
 
 ## But de l'itération Sprint 1
 - En tant qu’étudiant de l’UQAM, on peut s’authentifier avec
 notre domaine de l’uqam (soit @courrier.uqam.ca, @uqam.ca ou bien
 @ens.uqam.ca) ainsi que créer, modifier ou supprimer des annonces.
+
+## But de l'itération Sprint 2
