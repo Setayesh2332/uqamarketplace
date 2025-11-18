@@ -11,6 +11,7 @@ import SignUp from "./pages/signUp";
 import VerifyEmail from "./pages/VerifyEmail";
 import Profile from "./pages/profile";
 import HomePage from "./pages/HomePage";
+import MessagingPage from "./pages/MessagingPage";
 import Sell from "./pages/Sell";
 import PublishSuccess from "./pages/PublishSuccess";
 import CategoryPage from "./pages/CategoryPage";
@@ -106,6 +107,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <EditListing />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/messaging/:listingId"
+            element={
+              <ProtectedRoute>
+                <MessagingPage />
               </ProtectedRoute>
             }
           />

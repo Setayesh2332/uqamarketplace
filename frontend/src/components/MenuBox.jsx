@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { getAttributeLabel } from "../utils/attributesLabels";
 
+// export default function MenuBox({ title, example, attributes, locale = "fr", onMessage }) {
+  // const [expanded, setExpanded] = useState(false);
 export default function MenuBox({ id, title, example, attributes, locale = "fr" }) {
   const navigate = useNavigate();
 
@@ -35,6 +37,28 @@ export default function MenuBox({ id, title, example, attributes, locale = "fr" 
             </div>
           ))}
         </dl>
+
+        <div className="menu-box__actions">
+          {orderedPairs.length > 4 && (
+            <button
+              className="btn btn--ghost"
+              type="button"
+              onClick={() => setExpanded((prev) => !prev)}
+            >
+              {expanded ? "Voir moins" : "Voir plus"}
+            </button>
+          )}
+
+          {onMessage && (
+            <button
+              className="btn btn--primary"
+              type="button"
+              onClick={onMessage}
+            >
+              Contacter le vendeur
+            </button>
+          )}
+        </div>
         <button
             className="btn btn--ghost menu-box__more"
             onClick={handleVoirPlus}
