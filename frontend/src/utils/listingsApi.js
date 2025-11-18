@@ -156,6 +156,10 @@ export async function getListings(filters = {}, sortOptions = {}, limit = 50, of
       query = query.eq("user_id", filters.user_id);
     }
 
+    if (filters.condition) {
+      query = query.eq("condition", filters.condition);
+    }
+
     if (filters.search) {
       const searchTerm = filters.search.toLowerCase();
       query = query.or(

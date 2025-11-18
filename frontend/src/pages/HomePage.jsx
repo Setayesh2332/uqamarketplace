@@ -41,6 +41,9 @@ export default function HomePage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("prix_asc");
+  const [minPrice, setMinPrice] = useState("");
+  const [maxPrice, setMaxPrice] = useState("");
+  const [condition, setCondition] = useState("");
   const [listings, setListings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -74,6 +77,18 @@ export default function HomePage() {
           filters.search = query.trim();
         }
 
+        if (minPrice && !isNaN(parseFloat(minPrice))) {
+          filters.min_price = parseFloat(minPrice);
+        }
+
+        if (maxPrice && !isNaN(parseFloat(maxPrice))) {
+          filters.max_price = parseFloat(maxPrice);
+        }
+
+        if (condition && condition !== "Tous") {
+          filters.condition = condition;
+        }
+
         const { listings: fetchedListings } = await getListings(
           filters,
           { field: sortField, order: sortOrder },
@@ -90,7 +105,7 @@ export default function HomePage() {
     };
 
     fetchListings();
-  }, [query, sort]);
+  }, [query, sort, minPrice, maxPrice, condition]);
 
   // Transformer les annonces de la base de données au format MenuBox
   const items = useMemo(() => {
@@ -194,6 +209,64 @@ export default function HomePage() {
               <option value="prix_desc">Prix le plus élevé</option>
               <option value="recent">Plus récent</option>
             </select>
+          </div>
+        </section>
+
+        <section className="home-filters">
+          <div className="filters-container">
+            <div className="filter-group">
+              <label htmlFor="minPrice">Prix minimum</label>
+              <input
+                id="minPrice"
+                type="number"
+                placeholder="0"
+                min="0"
+                value={minPrice}
+                onChange={(e) => setMinPrice(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+            
+            <div className="filter-group">
+              <label htmlFor="maxPrice">Prix maximum</label>
+              <input
+                id="maxPrice"
+                type="number"
+                placeholder="10000"
+                min="0"
+                value={maxPrice}
+                onChange={(e) => setMaxPrice(e.target.value)}
+                disabled={loading}
+              />
+            </div>
+
+            <div className="filter-group">
+              <label htmlFor="condition">État</label>
+              <select
+                id="condition"
+                value={condition}
+                onChange={(e) => setCondition(e.target.value)}
+                disabled={loading}
+              >
+                <option value="">Tous</option>
+                <option value="Neuf">Neuf</option>
+                <option value="Comme neuf">Comme neuf</option>
+                <option value="Bon">Bon</option>
+                <option value="Acceptable">Acceptable</option>
+              </select>
+            </div>
+
+            <button
+              className="filter-reset"
+              onClick={() => {
+                setMinPrice("");
+                setMaxPrice("");
+                setCondition("");
+              }}
+              disabled={loading || (!minPrice && !maxPrice && !condition)}
+            >
+              Réinitialiser les filtres
+            </button>
           </div>
         </section>
 
