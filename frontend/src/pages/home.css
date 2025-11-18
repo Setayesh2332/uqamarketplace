@@ -217,21 +217,13 @@
 
 .home-shell .searchbar {
   display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: 12px;
+  align-items: center;
+  gap: 14px;
   padding: 0.7rem 1rem;
   border-radius: 16px;
   background: rgba(243, 246, 255, 0.8);
   border: 1px solid rgba(50, 80, 140, 0.1);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
-}
-
-.home-shell .searchbar__row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
 }
 
 .home-shell .searchbar__icon {
@@ -246,41 +238,6 @@
   font-size: 0.98rem;
   outline: none;
   color: #1e2a44;
-}
-
-.home-shell .searchbar__toggle {
-  white-space: nowrap;
-}
-
-.home-shell .searchbar__advanced {
-  width: 100%;
-  display: grid;
-  gap: 14px;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-}
-
-.home-shell .searchbar__advanced label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #4b5773;
-}
-
-.home-shell .searchbar__advanced input,
-.home-shell .searchbar__advanced select {
-  border-radius: 12px;
-  border: 1px solid rgba(50, 80, 140, 0.2);
-  padding: 0.55rem 0.75rem;
-  background: #fff;
-  font-size: 0.95rem;
-  color: #1e2a44;
-}
-
-.home-shell .searchbar__actions {
-  display: flex;
-  justify-content: flex-end;
 }
 
 .home-toolbar {
@@ -402,13 +359,6 @@
   margin: 0;
   font-weight: 600;
   color: #1e2a44;
-}
-
-.home-shell .menu-box__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-top: auto;
 }
 
 @media (max-width: 920px) {
