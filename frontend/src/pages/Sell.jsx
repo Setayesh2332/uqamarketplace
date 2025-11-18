@@ -4,27 +4,46 @@ import MenuBar from "../components/MenuBar";
 import { createListing } from "../utils/listingsApi";
 import "./Sell.css";
 
+const CONTACT_PREFS_KEY = "uqamarketplace_contactPrefs";
+
 export default function Sell() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    category: "Choisir",
-    program: "",
-    course: "",
-    title: "",
-    condition: "Choisir",
-    description: "",
-    price: "",
-    // Attributs spécifiques par catégorie
-    marque: "", // Pour Électronique
-    type: "", // Pour Meubles
-    taille: "", // Pour Vêtements
-    genre: "", // Pour Vêtements
-    contact_cell: false,
-    contact_email: false,
-    contact_other: false,
-    phone: "",
-    email: "",
-    otherContact: "",
+  const [form, setForm] = useState(() => {
+    let savedContacts = null;
+
+    if (typeof window !== "undefined") {
+      try {
+        const raw = localStorage.getItem(CONTACT_PREFS_KEY);
+        if (raw) {
+          savedContacts = JSON.parse(raw);
+        }
+      } catch (err) {
+        console.error("Impossible de charger les préférences de contact", err);
+      }
+    }
+
+    return {
+      category: "Choisir",
+      program: "",
+      course: "",
+      title: "",
+      condition: "Choisir",
+      description: "",
+      price: "",
+      // Attributs spécifiques par catégorie
+      marque: "", // Pour Électronique
+      type: "", // Pour Meubles
+      taille: "", // Pour Vêtements
+      genre: "", // Pour Vêtements
+
+      // Contact (pré-rempli si sauvegardé)
+      contact_cell: savedContacts?.contact_cell ?? false,
+      contact_email: savedContacts?.contact_email ?? false,
+      contact_other: savedContacts?.contact_other ?? false,
+      phone: savedContacts?.phone ?? "",
+      email: savedContacts?.email ?? "",
+      otherContact: savedContacts?.otherContact ?? "",
+    };
   });
 
   const [images, setImages] = useState([]);
@@ -123,6 +142,21 @@ export default function Sell() {
     }
 
     try {
+      try {
+        if (typeof window !== "undefined") {
+          const toSave = {
+            contact_cell: form.contact_cell,
+            contact_email: form.contact_email,
+            contact_other: form.contact_other,
+            phone: form.phone,
+            email: form.email,
+            otherContact: form.otherContact,
+          };
+          localStorage.setItem(CONTACT_PREFS_KEY, JSON.stringify(toSave));
+        }
+      } catch (e) {
+        console.error("Impossible de sauvegarder les préférences de contact", e);
+      }
       // Préparer les attributs spécifiques à la catégorie
       const categoryAttributes = {};
 

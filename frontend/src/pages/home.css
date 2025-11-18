@@ -305,6 +305,15 @@
   min-height: 220px;
 }
 
+.home-shell .menu-box__image {
+  width: 100%;
+  height: 220px;
+  overflow: hidden;
+  border-top-left-radius: 22px;
+  border-bottom-left-radius: 22px;
+  background: #f3f4f8;
+}
+
 .home-shell .menu-box__image img {
   width: 100%;
   height: 100%;
@@ -466,5 +475,10 @@
 
   .filter-reset {
     width: 100%;
+  }
+  .menu-box__more {
+  margin-top: 12px;
+  width: 100%;
+  justify-content: center;
   }
 }

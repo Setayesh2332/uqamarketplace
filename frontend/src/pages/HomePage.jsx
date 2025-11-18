@@ -7,11 +7,34 @@ import "./home.css";
 
 // Mapper les catégories aux attributs basé sur la structure MenuList
 const CATEGORY_ATTRIBUTES = {
-  "Manuel scolaire": ["titre", "cours", "prix", "condition", "description", "vendeur", "datePublication"],
-  "Électronique": ["titre", "marque", "prix", "condition", "description", "vendeur"],
-  "Meubles": ["titre", "type", "prix", "condition", "description", "vendeur"],
-  "Vêtements": ["titre", "taille", "genre", "prix", "condition", "description", "vendeur"],
-  "Autre": ["titre", "prix", "condition", "description", "vendeur"],
+  "Manuel scolaire": [
+    "titre",
+    "cours",
+    "prix",
+    "condition",
+    "description",
+    "vendeur",
+    "datePublication",
+  ],
+  Électronique: [
+    "titre",
+    "marque",
+    "prix",
+    "condition",
+    "description",
+    "vendeur",
+  ],
+  Meubles: ["titre", "type", "prix", "condition", "description", "vendeur"],
+  Vêtements: [
+    "titre",
+    "taille",
+    "genre",
+    "prix",
+    "condition",
+    "description",
+    "vendeur",
+  ],
+  Autre: ["titre", "prix", "condition", "description", "vendeur"],
 };
 
 export default function HomePage() {
@@ -34,7 +57,7 @@ export default function HomePage() {
         // Mapper les options de tri au format API
         let sortField = "created_at";
         let sortOrder = "desc";
-        
+
         if (sort === "prix_asc") {
           sortField = "price";
           sortOrder = "asc";
@@ -89,7 +112,8 @@ export default function HomePage() {
     return listings.map((listing) => {
       // Obtenir le nom du vendeur
       const sellerName = listing.profiles
-        ? `${listing.profiles.first_name} ${listing.profiles.last_name}`.trim() || listing.profiles.email
+        ? `${listing.profiles.first_name} ${listing.profiles.last_name}`.trim() ||
+          listing.profiles.email
         : "Vendeur inconnu";
 
       // Obtenir la première image ou une image de remplacement
@@ -105,7 +129,7 @@ export default function HomePage() {
 
       // Obtenir les attributs spécifiques à la catégorie
       const categoryAttrs = listing.category_attributes || {};
-      
+
       // Construire l'objet example
       const example = {
         image: imageUrl,
@@ -116,9 +140,15 @@ export default function HomePage() {
         vendeur: sellerName,
         datePublication: datePublication,
         // Ajouter les attributs spécifiques à la catégorie
-        ...(listing.category === "Manuel scolaire" && { cours: listing.course || "" }),
-        ...(listing.category === "Électronique" && { marque: categoryAttrs.marque || "" }),
-        ...(listing.category === "Meubles" && { type: categoryAttrs.type || "" }),
+        ...(listing.category === "Manuel scolaire" && {
+          cours: listing.course || "",
+        }),
+        ...(listing.category === "Électronique" && {
+          marque: categoryAttrs.marque || "",
+        }),
+        ...(listing.category === "Meubles" && {
+          type: categoryAttrs.type || "",
+        }),
         ...(listing.category === "Vêtements" && {
           taille: categoryAttrs.taille || "",
           genre: categoryAttrs.genre || "",
@@ -126,7 +156,8 @@ export default function HomePage() {
       };
 
       // Obtenir les attributs pour cette catégorie
-      const attributes = CATEGORY_ATTRIBUTES[listing.category] || CATEGORY_ATTRIBUTES["Autre"];
+      const attributes =
+        CATEGORY_ATTRIBUTES[listing.category] || CATEGORY_ATTRIBUTES["Autre"];
 
       return {
         id: listing.id,
@@ -139,10 +170,7 @@ export default function HomePage() {
 
   return (
     <div className="home-shell">
-      <MenuBar
-        onSearch={setQuery}
-        onSellClick={() => navigate("/sell")}
-      />
+      <MenuBar onSearch={setQuery} onSellClick={() => navigate("/sell")} />
 
       <main className="home-main">
         <section className="home-hero">
@@ -164,7 +192,9 @@ export default function HomePage() {
             ) : error ? (
               <span style={{ color: "#c33" }}>{error}</span>
             ) : (
-              `${items.length} annonce${items.length > 1 ? "s" : ""} disponible${items.length > 1 ? "s" : ""}`
+              `${items.length} annonce${
+                items.length > 1 ? "s" : ""
+              } disponible${items.length > 1 ? "s" : ""}`
             )}
           </div>
           <div className="home-toolbar__filter">
@@ -241,15 +271,24 @@ export default function HomePage() {
         </section>
 
         {loading ? (
-          <section className="home-grid" style={{ padding: "2rem", textAlign: "center" }}>
+          <section
+            className="home-grid"
+            style={{ padding: "2rem", textAlign: "center" }}
+          >
             <p>Chargement des annonces...</p>
           </section>
         ) : error ? (
-          <section className="home-grid" style={{ padding: "2rem", textAlign: "center" }}>
+          <section
+            className="home-grid"
+            style={{ padding: "2rem", textAlign: "center" }}
+          >
             <p style={{ color: "#c33" }}>{error}</p>
           </section>
         ) : items.length === 0 ? (
-          <section className="home-grid" style={{ padding: "2rem", textAlign: "center" }}>
+          <section
+            className="home-grid"
+            style={{ padding: "2rem", textAlign: "center" }}
+          >
             <p>Aucune annonce disponible pour le moment.</p>
           </section>
         ) : (
@@ -257,6 +296,7 @@ export default function HomePage() {
             {items.map(({ id, catLabel, attributes, example }) => (
               <MenuBox
                 key={id}
+                id={id}
                 title={catLabel}
                 attributes={attributes}
                 example={example}
