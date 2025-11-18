@@ -82,26 +82,3 @@ export const MENU_LIST = [
     ],
   },
 ];
-
-const slugify = (value = "") =>
-  value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/(^-|-$)/g, "");
-
-export function getMenuListings() {
-  const items = [];
-
-  MENU_LIST.forEach((category) => {
-    category.examples.forEach((example, index) => {
-      items.push({
-        id: `${slugify(category.label)}-${index}`,
-        catLabel: category.label,
-        attributes: category.attributes,
-        example,
-      });
-    });
-  });
-
-  return items;
-}
