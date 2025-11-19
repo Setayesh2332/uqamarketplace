@@ -1,0 +1,89 @@
+const frTranslations = {
+  login: {
+    title: "Connexion",
+    description: "Connectez-vous pour accéder à vos annonces et messages.",
+    emailLabel: "Courriel UQAM",
+    passwordLabel: "Mot de passe",
+    forgotPassword: "Mot de passe oublié ?",
+    submitButton: "Connexion",
+    submitting: "Connexion…",
+    newUser: "Nouveau sur la plateforme ?",
+    createAccount: "Créez un compte",
+    registrationSuccess:
+      "Inscription réussie ! Vérifiez votre email pour confirmer votre compte.",
+    error: "Une erreur est survenue lors de la connexion.",
+    errorInvalidCredentials: "Email ou mot de passe incorrect.",
+    errorTooManyRequests:
+      "Trop de tentatives. Veuillez réessayer dans quelques instants.",
+  },
+  signup: {
+    title: "Créez votre compte UQAMarketplace",
+    badge: "Étudiant·e UQAM",
+    description:
+      "Rejoignez la communauté pour publier des annonces, sauvegarder vos trouvailles et échanger avec d'autres étudiants.",
+    firstName: "Prénom *",
+    lastName: "Nom *",
+    email: "Courriel UQAM *",
+    password: "Mot de passe *",
+    confirmPassword: "Confirmez le mot de passe *",
+    studyCycle: "Cycle d'études *",
+    schoolYear: "Année scolaire *",
+    submitButton: "S'inscrire",
+    submitting: "Inscription…",
+    alreadyHaveAccount: "Déjà un compte?",
+    loginLink: "Connectez-vous",
+    success: "Inscription réussie ! Redirection vers la connexion…",
+    error: "Veuillez corriger les erreurs dans le formulaire.",
+    selectStudyCycle: "Choisissez votre cycle",
+    selectSchoolYear: "Sélectionnez votre année",
+    passwordPlaceholder: "Entrez votre mot de passe",
+    confirmPasswordPlaceholder: "Confirmez votre mot de passe",
+  },
+  validation: {
+    required: "Ce champ est requis",
+    nameMaxLength: "Le nom ne peut pas dépasser 50 caractères",
+    nameInvalidChars: "Seules les lettres, espaces et tirets sont autorisés",
+    emailInvalid: "Format d'email invalide",
+    emailUQAM:
+      "L'adresse email doit être un courriel UQAM (@uqam.ca ou *.uqam.ca)",
+    passwordMinLength: "Le mot de passe doit contenir au moins 8 caractères",
+    passwordLowercase: "Le mot de passe doit contenir au moins une minuscule",
+    passwordUppercase: "Le mot de passe doit contenir au moins une majuscule",
+    passwordDigit: "Le mot de passe doit contenir au moins un chiffre",
+    passwordSymbol:
+      "Le mot de passe doit contenir au moins un symbole (!@#$%^&*...)",
+    passwordMatch: "Les mots de passe ne correspondent pas",
+    passwordConfirm: "Veuillez confirmer votre mot de passe",
+    selectField: (fieldName) => `Veuillez sélectionner ${fieldName}`,
+    formErrors: "Veuillez corriger les erreurs dans le formulaire.",
+    accountCreationError: "Impossible de créer votre compte pour le moment.",
+    emailConfirmationRequired:
+      "Votre adresse doit être confirmée avant la connexion. Consultez le lien reçu ou contactez l'équipe.",
+  },
+  studyCycles: {
+    bachelor: "Baccalauréat",
+    master: "Maîtrise",
+    phd: "Doctorat",
+    certificate: "Certificat",
+  },
+  schoolYears: {
+    1: "1re année",
+    2: "2e année",
+    3: "3e année",
+    4: "4e année",
+  },
+  verifyEmail: {
+    verifying: "Vérification en cours...",
+    verified: "Email confirmé !",
+    error: "Erreur",
+    verifyingMessage: "Vérification de votre email en cours...",
+    successMessage: "Votre email a été confirmé avec succès !",
+    redirecting: "Redirection vers la page d'accueil...",
+    invalidLink:
+      "Lien de confirmation invalide ou expiré. Veuillez demander un nouveau lien.",
+    backToLogin: "Retour à la connexion",
+    genericError: "Une erreur est survenue lors de la vérification de l'email.",
+  },
+};
+
+export default frTranslations;

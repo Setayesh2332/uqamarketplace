@@ -1,0 +1,51 @@
+.login-password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.login-password-wrapper .form-outline {
+  width: 100%;
+  position: relative;
+}
+
+.login-password-wrapper .form-outline input {
+  padding-right: 3rem !important;
+}
+
+.login-password-toggle {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #8792a2;
+  cursor: pointer;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+  outline: none;
+  z-index: 10;
+  margin-top: 0.05rem;
+}
+
+.login-password-toggle:hover {
+  color: #4361ee;
+}
+
+.login-password-toggle:focus {
+  color: #4361ee;
+  outline: 2px solid rgba(67, 97, 238, 0.3);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.login-password-toggle svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  color: inherit;
+  display: block;
+}
+
