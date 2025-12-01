@@ -1,4 +1,4 @@
-import { FaSearch, FaUser, FaSignOutAlt } from "react-icons/fa";
+import { FaSearch, FaUser, FaSignOutAlt, FaEnvelope } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import SearchBar from "./SearchBar";
 import { useAuth } from "../contexts/AuthContext";
@@ -19,6 +19,7 @@ export default function MenuBar({ onSearch }) {
 
   const handleSellClick = () => navigate("/sell");
   const handleHomeClick = () => navigate("/");
+  const handleMessagesClick = () => navigate("/messages");
 
   return (
       <header className="menubar-header">
@@ -37,6 +38,13 @@ export default function MenuBar({ onSearch }) {
           <div className="header-actions">
             <button className="btn btn--primary" onClick={handleSellClick}>
               Vendre
+            </button>
+            <button
+                className="icon-messages"
+                aria-label="Messages"
+                onClick={handleMessagesClick}
+            >
+              <FaEnvelope />
             </button>
             <button
                 className="icon-user"

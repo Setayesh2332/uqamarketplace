@@ -583,8 +583,80 @@
   word-break: break-word;
 }
 
-/* Contact Button */
-.btn-contact {
+/* Message Input Section */
+.message-input-section {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.message-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: #4f67ef;
+  box-shadow: 0 0 0 3px rgba(79, 103, 239, 0.1);
+}
+
+.message-input:disabled {
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+.btn-send-message {
+  background: linear-gradient(135deg, #4f67ef 0%, #3b52d5 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(79, 103, 239, 0.3);
+  white-space: nowrap;
+}
+
+.btn-send-message:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 103, 239, 0.4);
+}
+
+.btn-send-message:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-send-message:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Message Info (pour le vendeur) */
+.message-info {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f9fafb;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+}
+
+.message-info-text {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+.btn-view-messages {
   width: 100%;
   background: linear-gradient(135deg, #4f67ef 0%, #3b52d5 100%);
   color: white;
@@ -598,12 +670,12 @@
   box-shadow: 0 4px 12px rgba(79, 103, 239, 0.3);
 }
 
-.btn-contact:hover {
+.btn-view-messages:hover {
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(79, 103, 239, 0.4);
 }
 
-.btn-contact:active {
+.btn-view-messages:active {
   transform: translateY(0);
 }
 

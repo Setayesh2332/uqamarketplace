@@ -1,0 +1,167 @@
+.messages-page {
+  min-height: 100vh;
+  background: #f9fafb;
+}
+
+.messages-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+.messages-header {
+  margin-bottom: 2rem;
+}
+
+.messages-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.messages-loading,
+.messages-error {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.messages-error {
+  color: #dc2626;
+  background: #fee2e2;
+  padding: 1rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+}
+
+.messages-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.messages-empty-text {
+  font-size: 1.1rem;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.messages-empty-hint {
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+.conversations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.conversation-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.conversation-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-color: #4f67ef;
+}
+
+.conversation-image {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.conversation-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.conversation-image-placeholder-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #e5e7eb;
+}
+
+.conversation-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.conversation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.conversation-other-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1f2937;
+  margin: 0;
+}
+
+.conversation-date {
+  font-size: 0.85rem;
+  color: #6b7280;
+  white-space: nowrap;
+}
+
+.conversation-listing-title {
+  font-size: 0.95rem;
+  color: #374151;
+  margin: 0 0 0.25rem 0;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.conversation-listing-price {
+  font-size: 0.9rem;
+  color: #4f67ef;
+  font-weight: 700;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .messages-container {
+    padding: 1rem;
+  }
+
+  .messages-title {
+    font-size: 1.5rem;
+  }
+
+  .conversation-item {
+    padding: 1rem;
+  }
+
+  .conversation-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .conversation-other-name {
+    font-size: 1rem;
+  }
+}
+

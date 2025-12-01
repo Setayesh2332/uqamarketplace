@@ -2,16 +2,21 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MenuBar from "../components/MenuBar";
 import { getListingById } from "../utils/listingsApi";
+import { getOrCreateConversation } from "../utils/conversationsApi";
+import { useAuth } from "../contexts/AuthContext";
 import ArticleRating from "../components/ratingArticle";
 import "./ListingDetail.css";
 
 export default function ListingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [messageText, setMessageText] = useState("Bonjour, je suis intéressé");
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -54,6 +59,42 @@ export default function ListingDetail() {
       return listing.listing_images[currentImageIndex].path;
     }
     return "https://picsum.photos/800/450?placeholder";
+  };
+
+  const handleSendMessage = async () => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    // Vérifier que l'utilisateur n'est pas le vendeur
+    if (listing?.profiles?.id === user.id) {
+      setError("Vous ne pouvez pas vous contacter vous-même");
+      return;
+    }
+
+    if (!messageText.trim()) {
+      setError("Veuillez entrer un message");
+      return;
+    }
+
+    setSending(true);
+    setError(null);
+
+    try {
+      // Créer ou récupérer la conversation
+      const conversation = await getOrCreateConversation(id);
+      
+      // Rediriger vers la page de chat avec le message pré-rempli
+      navigate(`/chat/${conversation.id}`, {
+        state: { initialMessage: messageText.trim() }
+      });
+    } catch (err) {
+      console.error("Erreur lors de l'envoi du message:", err);
+      setError(err.message || "Erreur lors de l'envoi du message");
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -265,7 +306,45 @@ export default function ListingDetail() {
                     )}
                   </div>
 
-                  <button className="btn-contact">Contacter le vendeur</button>
+                  {/* Zone de message - seulement si l'utilisateur n'est pas le vendeur */}
+                  {user && listing?.profiles?.id !== user.id && (
+                    <div className="message-input-section">
+                      <input
+                        type="text"
+                        className="message-input"
+                        placeholder="Bonjour, je suis intéressé"
+                        value={messageText}
+                        onChange={(e) => setMessageText(e.target.value)}
+                        onKeyPress={(e) => {
+                          if (e.key === "Enter" && !sending) {
+                            handleSendMessage();
+                          }
+                        }}
+                        disabled={sending}
+                      />
+                      <button
+                        className="btn-send-message"
+                        onClick={handleSendMessage}
+                        disabled={sending || !messageText.trim()}
+                      >
+                        {sending ? "Envoi..." : "Envoyer"}
+                      </button>
+                    </div>
+                  )}
+                  
+                  {user && listing?.profiles?.id === user.id && (
+                    <div className="message-info">
+                      <p className="message-info-text">
+                        C'est votre annonce. Les messages des acheteurs apparaîtront dans votre messagerie.
+                      </p>
+                      <button
+                        className="btn-view-messages"
+                        onClick={() => navigate("/messages")}
+                      >
+                        Voir mes messages
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
