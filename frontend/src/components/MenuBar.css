@@ -100,6 +100,26 @@
   box-shadow: 0 26px 55px rgba(67, 97, 238, 0.45);
 }
 
+/* Messages icon */
+.icon-messages {
+  width: 44px;
+  height: 44px;
+  background: rgba(67, 97, 238, 0.15);
+  border-radius: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #1e3a5f;
+  font-size: 1.1rem;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.icon-messages:hover {
+  background: rgba(67, 97, 238, 0.25); /* slightly darker blue hover */
+}
+
 /* Profile icon */
 .icon-user {
   width: 44px;
