@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import MenuBar from "../components/MenuBar";
 import { getListingById } from "../utils/listingsApi";
+import ArticleRating from "../components/ratingArticle";
 import "./ListingDetail.css";
 
 export default function ListingDetail() {
@@ -152,6 +153,9 @@ export default function ListingDetail() {
                       </div>
                     )}
                 </div>
+
+                {/* Composant Rating - après le carousel */}
+                <ArticleRating articleId={id} userId="current-user-id" />
               </div>
 
               {/* Section droite - Infos condensées */}
