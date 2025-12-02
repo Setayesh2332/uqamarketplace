@@ -119,32 +119,48 @@ export async function getUserConversations() {
 
     const profilesMap = new Map(profiles?.map(p => [p.id, p]) || []);
 
-    // Transformer les données pour faciliter l'utilisation
-    return conversations.map(conv => {
-      const otherUserId = conv.buyer_id === user.id ? conv.seller_id : conv.buyer_id;
-      const otherUser = profilesMap.get(otherUserId);
-      const isBuyer = conv.buyer_id === user.id;
-      
-      // Trier les images par display_order
-      const sortedImages = (conv.listings?.listing_images || []).sort(
-        (a, b) => a.display_order - b.display_order
-      );
+    // Vérifier quelles conversations ont des messages
+    // On ne veut afficher que les conversations où il y a eu des échanges
+    const conversationIds = conversations.map(conv => conv.id);
+    const { data: messagesCount } = await supabase
+      .from("messages")
+      .select("conversation_id")
+      .in("conversation_id", conversationIds);
 
-      return {
-        ...conv,
-        otherUser: {
-          id: otherUser?.id,
-          firstName: otherUser?.first_name,
-          lastName: otherUser?.last_name,
-          fullName: otherUser ? `${otherUser.first_name} ${otherUser.last_name}` : "Utilisateur inconnu",
-        },
-        listing: {
-          ...conv.listings,
-          listing_images: sortedImages,
-        },
-        isBuyer,
-      };
-    });
+    // Créer un Set des conversation_ids qui ont des messages
+    const conversationsWithMessages = new Set(
+      (messagesCount || []).map(msg => msg.conversation_id)
+    );
+
+    // Transformer les données pour faciliter l'utilisation
+    // Filtrer pour ne garder que les conversations avec des messages
+    return conversations
+      .filter(conv => conversationsWithMessages.has(conv.id))
+      .map(conv => {
+        const otherUserId = conv.buyer_id === user.id ? conv.seller_id : conv.buyer_id;
+        const otherUser = profilesMap.get(otherUserId);
+        const isBuyer = conv.buyer_id === user.id;
+        
+        // Trier les images par display_order
+        const sortedImages = (conv.listings?.listing_images || []).sort(
+          (a, b) => a.display_order - b.display_order
+        );
+
+        return {
+          ...conv,
+          otherUser: {
+            id: otherUser?.id,
+            firstName: otherUser?.first_name,
+            lastName: otherUser?.last_name,
+            fullName: otherUser ? `${otherUser.first_name} ${otherUser.last_name}` : "Utilisateur inconnu",
+          },
+          listing: {
+            ...conv.listings,
+            listing_images: sortedImages,
+          },
+          isBuyer,
+        };
+      });
   } catch (error) {
     console.error("Erreur lors de la récupération des conversations:", error);
     throw error;
@@ -173,6 +189,7 @@ export async function getConversationWithMessages(conversationId) {
           id,
           title,
           price,
+          user_id,
           listing_images (
             id,
             path,
@@ -192,6 +209,12 @@ export async function getConversationWithMessages(conversationId) {
       throw new Error("Vous n'avez pas accès à cette conversation");
     }
 
+    // Vérification supplémentaire : s'assurer qu'un utilisateur ne peut pas accéder à une conversation
+    // où il serait à la fois buyer et seller (ne devrait jamais arriver, mais sécurité supplémentaire)
+    if (conversation.buyer_id === user.id && conversation.seller_id === user.id) {
+      throw new Error("Vous ne pouvez pas accéder à cette conversation");
+    }
+
     // Récupérer les profils des participants
     const { data: buyerProfile } = await supabase
       .from("profiles")
@@ -205,7 +228,9 @@ export async function getConversationWithMessages(conversationId) {
       .eq("id", conversation.seller_id)
       .single();
 
-    // Récupérer les messages
+    // Récupérer les messages de cette conversation
+    // Les politiques RLS devraient déjà filtrer pour que l'utilisateur ne voie que les messages
+    // des conversations auxquelles il participe (buyer ou seller)
     const { data: messages, error: messagesError } = await supabase
       .from("messages")
       .select("*")
@@ -216,11 +241,20 @@ export async function getConversationWithMessages(conversationId) {
       throw messagesError;
     }
 
+    // Filtrer les messages pour s'assurer qu'ils appartiennent bien à cette conversation
+    // et que l'expéditeur est soit l'utilisateur, soit l'autre participant (buyer ou seller)
+    const filteredMessages = (messages || []).filter(msg => {
+      // Vérifier que l'expéditeur est bien l'un des participants de la conversation
+      const isValidSender = msg.sender_id === conversation.buyer_id || 
+                           msg.sender_id === conversation.seller_id;
+      return isValidSender;
+    });
+
     const otherUser = conversation.buyer_id === user.id ? sellerProfile : buyerProfile;
     const isBuyer = conversation.buyer_id === user.id;
 
     // Récupérer les profils des expéditeurs des messages
-    const senderIds = [...new Set(messages.map(msg => msg.sender_id))];
+    const senderIds = [...new Set(filteredMessages.map(msg => msg.sender_id))];
     const { data: senderProfiles } = await supabase
       .from("profiles")
       .select("id, first_name, last_name")
@@ -246,7 +280,7 @@ export async function getConversationWithMessages(conversationId) {
         listing_images: sortedImages,
       },
       isBuyer,
-      messages: messages.map(msg => {
+      messages: filteredMessages.map(msg => {
         const sender = senderProfilesMap.get(msg.sender_id);
         return {
           ...msg,
@@ -284,7 +318,7 @@ export async function sendMessage(conversationId, content, imageFile = null) {
     // Vérifier que l'utilisateur fait partie de la conversation
     const { data: conversation, error: convError } = await supabase
       .from("conversations")
-      .select("buyer_id, seller_id")
+      .select("buyer_id, seller_id, listing_id")
       .eq("id", conversationId)
       .single();
 
@@ -294,6 +328,21 @@ export async function sendMessage(conversationId, content, imageFile = null) {
 
     if (conversation.buyer_id !== user.id && conversation.seller_id !== user.id) {
       throw new Error("Vous n'avez pas accès à cette conversation");
+    }
+
+    // Récupérer l'annonce pour vérifier que l'utilisateur n'est pas le vendeur
+    const { data: listing, error: listingError } = await supabase
+      .from("listings")
+      .select("user_id")
+      .eq("id", conversation.listing_id)
+      .single();
+
+    if (!listingError && listing) {
+      // Vérifier que l'utilisateur n'est pas le vendeur de l'annonce
+      // (un vendeur ne devrait pas pouvoir envoyer de messages à sa propre annonce)
+      if (listing.user_id === user.id && conversation.seller_id === user.id) {
+        throw new Error("Vous ne pouvez pas envoyer de messages à votre propre annonce");
+      }
     }
 
     // Valider qu'il y a au moins du contenu ou une image
