@@ -11,7 +11,7 @@ const ArticleRating = ({ articleId, userId }) => {
 
   const handleRating = (rating) => {
     if (!userId) {
-      alert("Vous devez être connecté pour noter un article");
+      alert("Vous devez être connecté pour noter le vendeur");
       return;
     }
 
@@ -51,7 +51,7 @@ const ArticleRating = ({ articleId, userId }) => {
 
       <div className="rating-input">
         <p className="rating-label">
-          {hasVoted ? "Modifier votre note :" : "Notez cet article :"}
+          {hasVoted ? "Modifier votre note :" : "Notez le vendeur :"}
         </p>
         <div className="stars-interactive">
           {[1, 2, 3, 4, 5].map((star) => (
