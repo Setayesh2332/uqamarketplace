@@ -330,19 +330,10 @@ export async function sendMessage(conversationId, content, imageFile = null) {
       throw new Error("Vous n'avez pas accès à cette conversation");
     }
 
-    // Récupérer l'annonce pour vérifier que l'utilisateur n'est pas le vendeur
-    const { data: listing, error: listingError } = await supabase
-      .from("listings")
-      .select("user_id")
-      .eq("id", conversation.listing_id)
-      .single();
-
-    if (!listingError && listing) {
-      // Vérifier que l'utilisateur n'est pas le vendeur de l'annonce
-      // (un vendeur ne devrait pas pouvoir envoyer de messages à sa propre annonce)
-      if (listing.user_id === user.id && conversation.seller_id === user.id) {
-        throw new Error("Vous ne pouvez pas envoyer de messages à votre propre annonce");
-      }
+    // Vérification supplémentaire : empêcher qu'un utilisateur soit à la fois buyer et seller
+    // (ne devrait jamais arriver, mais sécurité supplémentaire)
+    if (conversation.buyer_id === user.id && conversation.seller_id === user.id) {
+      throw new Error("Vous ne pouvez pas envoyer de messages dans cette conversation");
     }
 
     // Valider qu'il y a au moins du contenu ou une image
