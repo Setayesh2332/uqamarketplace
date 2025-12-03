@@ -17,6 +17,8 @@ import CategoryPage from "./pages/CategoryPage";
 import MyListings from "./pages/MyListings";
 import EditListing from "./pages/EditListing";
 import ListingDetail from "./pages/ListingDetail";
+import Messages from "./pages/Messages";
+import Chat from "./pages/Chat";
 import Layout from "./components/Layout";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
@@ -120,6 +122,28 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <ListingDetail />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Messagerie */}
+            <Route
+              path="/messages"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Messages />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/chat/:id"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Chat />
                   </Layout>
                 </ProtectedRoute>
               }

@@ -28,6 +28,9 @@ export default function Footer() {
                 <a href="/sell">Vendre</a>
               </li>
               <li>
+                <a href="/messages">Messages</a>
+              </li>
+              <li>
                 <a href="/profile">Mon profil</a>
               </li>
             </ul>

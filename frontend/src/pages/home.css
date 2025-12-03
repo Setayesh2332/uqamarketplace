@@ -387,7 +387,7 @@
 
 /* Filtres avancés */
 .home-filters {
-  padding: 0 28px;
+  padding: 0 0px;
 }
 
 .filters-container {
@@ -477,8 +477,8 @@
     width: 100%;
   }
   .menu-box__more {
-  margin-top: 12px;
-  width: 100%;
-  justify-content: center;
+    margin-top: 12px;
+    width: 100%;
+    justify-content: center;
   }
 }
