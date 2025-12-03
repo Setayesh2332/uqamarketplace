@@ -1,28 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Star } from "lucide-react";
 import "./ratingArticle.css";
+import {
+  getSellerRatings,
+  getUserRatingForSeller,
+  submitRating,
+} from "../utils/ratingsApi";
 
-const ArticleRating = ({ articleId, userId }) => {
+const ArticleRating = ({ sellerId, userId }) => {
   const [userRating, setUserRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [totalVotes, setTotalVotes] = useState(0);
   const [hasVoted, setHasVoted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleRating = (rating) => {
+  useEffect(() => {
+    const fetchRatings = async () => {
+      if (!sellerId) return;
+
+      try {
+        setLoading(true);
+      
+        const ratingsData = await getSellerRatings(sellerId);
+        setAverageRating(ratingsData.averageRating);
+        setTotalVotes(ratingsData.totalVotes);
+
+        if (userId) {
+          const userRatingData = await getUserRatingForSeller(sellerId, userId);
+          if (userRatingData) {
+            setUserRating(userRatingData.rating);
+            setHasVoted(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching ratings:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRatings();
+  }, [sellerId, userId]);
+
+  const handleRating = async (rating) => {
     if (!userId) {
       alert("Vous devez être connecté pour noter le vendeur");
       return;
     }
 
-    setUserRating(rating);
-    setHasVoted(true);
+    try {
+      setSubmitting(true);
+  
+      await submitRating(sellerId, userId, rating);
 
-    const newTotal = totalVotes + 1;
-    const newAverage = (averageRating * totalVotes + rating) / newTotal;
-    setAverageRating(newAverage);
-    setTotalVotes(newTotal);
+      setUserRating(rating);
+      setHasVoted(true);
+
+      const ratingsData = await getSellerRatings(sellerId);
+      setAverageRating(ratingsData.averageRating);
+      setTotalVotes(ratingsData.totalVotes);
+    } catch (error) {
+      console.error("Error submitting rating:", error);
+      alert("Erreur lors de l'enregistrement de votre note. Veuillez réessayer.");
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="article-rating">
+        <p>Chargement des évaluations...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="article-rating">
@@ -63,14 +116,19 @@ const ArticleRating = ({ articleId, userId }) => {
               stroke={
                 star <= (hoverRating || userRating) ? "#FFD700" : "#9CA3AF"
               }
-              onMouseEnter={() => setHoverRating(star)}
+              onMouseEnter={() => !submitting && setHoverRating(star)}
               onMouseLeave={() => setHoverRating(0)}
-              onClick={() => handleRating(star)}
-              style={{ cursor: "pointer", transition: "all 0.2s" }}
+              onClick={() => !submitting && handleRating(star)}
+              style={{
+                cursor: submitting ? "not-allowed" : "pointer",
+                transition: "all 0.2s",
+                opacity: submitting ? 0.5 : 1,
+              }}
             />
           ))}
         </div>
-        {hasVoted && (
+        {submitting && <p className="user-rating-text">Enregistrement...</p>}
+        {hasVoted && !submitting && (
           <p className="user-rating-text">
             Votre note : {userRating} étoile{userRating > 1 ? "s" : ""}
           </p>

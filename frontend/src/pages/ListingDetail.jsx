@@ -196,7 +196,7 @@ export default function ListingDetail() {
                 </div>
 
                 {/* Composant Rating - après le carousel */}
-                <ArticleRating articleId={id} userId="current-user-id" />
+                <ArticleRating sellerId={listing.user_id} userId={user?.id} />
               </div>
 
               {/* Section droite - Infos condensées */}
