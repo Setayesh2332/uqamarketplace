@@ -1,47 +1,40 @@
-import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAttributeLabel } from "../utils/attributesLabels";
 
-export default function MenuBox({ id, title, example, attributes, locale = "fr" }) {
-  const navigate = useNavigate();
+export default function MenuBox({ id, title, example }) {
+    const navigate = useNavigate();
 
-  const orderedPairs = useMemo(() => {
-    return attributes
-      .filter((key) => example[key] !== undefined && key !== "image")
-      .map((key) => [getAttributeLabel(key, locale), example[key]]);
-  }, [attributes, example, locale]);
+    const handleVoirPlus = () => {
+        navigate(`/listing/${id}`);
+    };
 
-  // Si non étendu, on montre les 4 premiers
-  const visible = orderedPairs.slice(0, 4);
-  const handleVoirPlus = () => {
-      navigate(`/listing/${id}`);
-  };
-
-  return (
-    <article className="menu-box">
-      {/* Section image (gauche) */}
-      <div className="menu-box__image">
-        <img src={example.image} alt={example.titre || title} />
-      </div>
-
-      {/* Section infos (droite) */}
-      <div className="menu-box__info">
-        <h3 className="menu-box__title">{example.titre || title}</h3>
-        <dl className="menu-box__fields">
-          {visible.map(([key, value]) => (
-            <div className="field" key={key}>
-              <dt>{key}</dt>
-              <dd>{String(value)}</dd>
+    return (
+        <article className="menu-box" onClick={handleVoirPlus}>
+            {/* Image section (top) */}
+            <div className="menu-box__image">
+                <img src={example.image} alt={example.titre || title} />
             </div>
-          ))}
-        </dl>
-        <button
-            className="btn btn--ghost menu-box__more"
-            onClick={handleVoirPlus}
-        >
-            Voir plus
-        </button>
-      </div>
-    </article>
-  );
+
+            {/* Info section (bottom) */}
+            <div className="menu-box__info">
+                <div className="menu-box__header">
+                    <h3 className="menu-box__title">{example.titre || title}</h3>
+                    <span className="menu-box__category">{title}</span>
+                </div>
+
+                <div className="menu-box__price">
+                    {example.prix} $
+                </div>
+
+                <button
+                    className="btn btn--ghost menu-box__more"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleVoirPlus();
+                    }}
+                >
+                    Voir plus
+                </button>
+            </div>
+        </article>
+    );
 }
