@@ -283,6 +283,10 @@ export async function getListingById(listingId) {
     return {
       ...listingData,
       profiles: profiles,
+      images: (listingData.listing_images || []).map(img => ({
+        id: img.id,
+        url: img.path
+      }))
     };
   } catch (error) {
     console.error("Erreur lors de la récupération de l'annonce:", error);
@@ -294,9 +298,10 @@ export async function getListingById(listingId) {
  * Mettre à jour une annonce
  * @param {string} listingId - L'ID de l'annonce
  * @param {Object} updates - Champs à mettre à jour
+ * @param {File[]} newImageFiles - Nouveaux fichiers image à ajouter
  * @returns {Promise<Object>} L'annonce mise à jour
  */
-export async function updateListing(listingId, updates) {
+export async function updateListing(listingId, updates, newImageFiles = []) {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     
@@ -319,8 +324,8 @@ export async function updateListing(listingId, updates) {
       throw new Error("Vous ne pouvez mettre à jour que vos propres annonces");
     }
 
-    // Préparer le payload de mise à jour
-    const updatePayload = { ...updates };
+    // Préparer le payload de mise à jour (enlever keep_image_ids)
+    const { keep_image_ids, ...updatePayload } = updates;
     
     // Gérer les mises à jour des informations de contact
     if (updates.contact_cell !== undefined) {
@@ -339,6 +344,91 @@ export async function updateListing(listingId, updates) {
       }
     }
 
+    // Gérer la suppression des images
+    if (keep_image_ids) {
+      // Récupérer toutes les images actuelles
+      const { data: allImages } = await supabase
+        .from("listing_images")
+        .select("id, path")
+        .eq("listing_id", listingId);
+
+      if (allImages && allImages.length > 0) {
+        // Trouver les images à supprimer
+        const imagesToDelete = allImages.filter(
+          img => !keep_image_ids.includes(img.id)
+        );
+
+        // Supprimer les fichiers du storage et les enregistrements
+        for (const image of imagesToDelete) {
+          // Extraire le chemin relatif
+          const urlMatch = image.path.match(/listing-images\/(.+)/);
+          if (urlMatch && urlMatch[1]) {
+            const filePath = urlMatch[1];
+            await supabase.storage
+              .from("listing-images")
+              .remove([filePath]);
+          }
+
+          // Supprimer l'enregistrement de la base de données
+          await supabase
+            .from("listing_images")
+            .delete()
+            .eq("id", image.id);
+        }
+      }
+    }
+
+    // Téléverser les nouvelles images
+    if (newImageFiles.length > 0) {
+      // Obtenir le nombre actuel d'images pour le display_order
+      const { data: existingImages } = await supabase
+        .from("listing_images")
+        .select("display_order")
+        .eq("listing_id", listingId)
+        .order("display_order", { ascending: false })
+        .limit(1);
+
+      let startOrder = 0;
+      if (existingImages && existingImages.length > 0) {
+        startOrder = existingImages[0].display_order + 1;
+      }
+
+      for (let i = 0; i < newImageFiles.length; i++) {
+        const file = newImageFiles[i];
+        const fileExt = file.name.split(".").pop();
+        const fileName = `${listingId}/${Date.now()}-${i}.${fileExt}`;
+        const filePath = `listings/${fileName}`;
+
+        // Téléverser vers Supabase Storage
+        const { error: uploadError } = await supabase.storage
+          .from("listing-images")
+          .upload(filePath, file, {
+            cacheControl: "3600",
+            upsert: false,
+          });
+
+        if (uploadError) {
+          console.error(`Erreur lors du téléversement de l'image ${i}:`, uploadError);
+          continue;
+        }
+
+        // Obtenir l'URL publique
+        const { data: urlData } = supabase.storage
+          .from("listing-images")
+          .getPublicUrl(filePath);
+
+        // Insérer l'enregistrement de l'image
+        await supabase
+          .from("listing_images")
+          .insert({
+            listing_id: listingId,
+            path: urlData.publicUrl,
+            display_order: startOrder + i,
+          });
+      }
+    }
+
+    // Mettre à jour l'annonce
     const { data, error } = await supabase
       .from("listings")
       .update(updatePayload)
@@ -395,8 +485,6 @@ export async function deleteListing(listingId) {
     if (images && images.length > 0) {
       for (const image of images) {
         // Extraire le chemin relatif depuis l'URL complète
-        // Format: https://...supabase.co/storage/v1/object/public/listing-images/listings/{id}/file.jpg
-        // On veut: listings/{id}/file.jpg
         const urlMatch = image.path.match(/listing-images\/(.+)/);
         if (urlMatch && urlMatch[1]) {
           const filePath = urlMatch[1];
@@ -406,7 +494,6 @@ export async function deleteListing(listingId) {
 
           if (deleteError) {
             console.warn(`Erreur lors de la suppression du fichier ${filePath}:`, deleteError);
-            // Continuer même si une image ne peut pas être supprimée
           }
         }
       }
@@ -426,4 +513,3 @@ export async function deleteListing(listingId) {
     throw error;
   }
 }
-

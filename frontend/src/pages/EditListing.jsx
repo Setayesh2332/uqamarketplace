@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import MenuBar from "../components/MenuBar";
 import { getListingById, updateListing } from "../utils/listingsApi";
@@ -27,15 +27,13 @@ export default function EditListing() {
     otherContact: "",
   });
 
+  const [images, setImages] = useState([]);
+  const [existingImages, setExistingImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    loadListing();
-  }, [id]);
-
-  const loadListing = async () => {
+  const loadListing = useCallback(async () => {
     try {
       setLoading(true);
       const listing = await getListingById(id);
@@ -61,16 +59,55 @@ export default function EditListing() {
         email: listing.contact_email_value || "",
         otherContact: listing.contact_other_value || "",
       });
+
+      // Charger les images existantes
+      if (listing.images && listing.images.length > 0) {
+        setExistingImages(listing.images.map(img => ({
+          id: img.id || crypto.randomUUID(),
+          url: img.url || img,
+          isExisting: true
+        })));
+      }
     } catch (err) {
       console.error("Erreur lors du chargement de l'annonce:", err);
       setError("Impossible de charger l'annonce");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    loadListing();
+  }, [loadListing]);
 
   const setField = (key, value) => setForm((f) => ({ ...f, [key]: value }));
   const handleCheck = (key) => (e) => setField(key, e.target.checked);
+
+  const handleImages = (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    const next = files.map((file) => ({
+      id: crypto.randomUUID(),
+      file,
+      url: URL.createObjectURL(file),
+      isExisting: false
+    }));
+    setImages((prev) => [...prev, ...next]);
+    e.target.value = "";
+  };
+
+  const removeNewImage = (id) => {
+    setImages((prev) => {
+      const toRevoke = prev.find((im) => im.id === id);
+      if (toRevoke) URL.revokeObjectURL(toRevoke.url);
+      return prev.filter((im) => im.id !== id);
+    });
+  };
+
+  const removeExistingImage = (id) => {
+    setExistingImages((prev) => prev.filter((im) => im.id !== id));
+  };
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -168,9 +205,14 @@ export default function EditListing() {
         contact_email_value: form.contact_email ? form.email.trim() : null,
         contact_other_value: form.contact_other ? form.otherContact.trim() : null,
         category_attributes: categoryAttributes,
+        // Inclure les IDs des images existantes à conserver
+        keep_image_ids: existingImages.map(img => img.id)
       };
 
-      await updateListing(id, updates);
+      // Préparer les nouveaux fichiers images
+      const newImageFiles = images.map((img) => img.file);
+
+      await updateListing(id, updates, newImageFiles);
       alert("Annonce mise à jour avec succès !");
       navigate("/my-listings");
     } catch (err) {
@@ -205,6 +247,8 @@ export default function EditListing() {
       </div>
     );
   }
+
+  const allImages = [...existingImages, ...images];
 
   return (
     <div className="sell-shell">
@@ -429,10 +473,71 @@ export default function EditListing() {
               </div>
             </fieldset>
 
+            <div className="form-row form-row--full">
+              <label>Photos :</label>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                onChange={handleImages}
+                className="file-input"
+              />
+              {allImages.length > 0 && (
+                <div className="image-grid">
+                  {existingImages.map((img) => (
+                    <div key={img.id} className="image-card">
+                      <img src={img.url} alt="aperçu" />
+                      <button
+                        type="button"
+                        className="image-delete"
+                        onClick={() => removeExistingImage(img.id)}
+                        aria-label="Supprimer cette image"
+                        title="Supprimer"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                  {images.map((img) => (
+                    <div key={img.id} className="image-card">
+                      <img src={img.url} alt="aperçu" />
+                      <button
+                        type="button"
+                        className="image-delete"
+                        onClick={() => removeNewImage(img.id)}
+                        aria-label="Supprimer cette image"
+                        title="Supprimer"
+                      >
+                        ✕
+                      </button>
+                      <div style={{
+                        position: 'absolute',
+                        bottom: '4px',
+                        left: '4px',
+                        backgroundColor: 'rgba(67, 97, 238, 0.9)',
+                        color: 'white',
+                        padding: '2px 6px',
+                        borderRadius: '4px',
+                        fontSize: '0.7rem',
+                        fontWeight: '600'
+                      }}>
+                        NOUVELLE
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {allImages.length === 0 && (
+                <p style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                  Aucune image. Ajoutez des photos pour votre annonce.
+                </p>
+              )}
+            </div>
+
             <div className="form-actions">
               <button
                 type="button"
-                className="btn-secondary"
+                className="btn-cancel"
                 onClick={() => navigate("/my-listings")}
                 disabled={saving}
               >
