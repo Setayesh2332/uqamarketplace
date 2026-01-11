@@ -55,11 +55,11 @@ export default function ListingDetail() {
   };
 
   const getCurrentImage = () => {
-    if (listing?.listing_images && listing.listing_images.length > 0) {
-      return listing.listing_images[currentImageIndex].path;
-    }
-    return "https://picsum.photos/800/450?placeholder";
-  };
+  if (listing?.listing_images && listing.listing_images.length > 0) {
+    return listing.listing_images[currentImageIndex].path;
+  }
+  return "https://placehold.co/800x450/e5e7eb/6b7280?text=Pas+d'image&font=raleway";
+};
 
   const handleSendMessage = async () => {
     if (!user) {

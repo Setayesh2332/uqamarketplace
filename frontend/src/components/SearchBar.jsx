@@ -1,8 +1,22 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 
 export default function SearchBar({ onSearch }) {
   const [q, setQ] = useState("");
+
+  // Debounce search for better UX (optional - searches as you type after 500ms delay)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (q.trim()) {
+        onSearch?.(q.trim());
+      } else if (q === "") {
+        // Reset search when input is cleared
+        onSearch?.("");
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [q, onSearch]);
 
   const submit = (e) => {
     e.preventDefault();

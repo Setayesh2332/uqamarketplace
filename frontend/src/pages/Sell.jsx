@@ -24,7 +24,6 @@ export default function Sell() {
 
     return {
       category: "Choisir",
-      program: "",
       course: "",
       title: "",
       condition: "Choisir",
@@ -86,12 +85,6 @@ export default function Sell() {
       return;
     }
 
-    if (form.condition === "Choisir") {
-      setError("Veuillez sélectionner l'état de l'article");
-      setLoading(false);
-      return;
-    }
-
     if (!form.title.trim()) {
       setError("Veuillez entrer un titre");
       setLoading(false);
@@ -104,14 +97,20 @@ export default function Sell() {
       return;
     }
 
-    if (form.description.trim().length > 2000) {
-      setError("La description ne doit pas dépasser 2000 caractères");
+    if (form.condition === "Choisir") {
+      setError("Veuillez sélectionner l'état de l'article");
       setLoading(false);
       return;
     }
 
     if (!form.price.trim() || isNaN(parseFloat(form.price)) || parseFloat(form.price) <= 0) {
       setError("Veuillez entrer un prix valide (supérieur à 0)");
+      setLoading(false);
+      return;
+    }
+
+    if (form.description.trim().length > 2000) {
+      setError("La description ne doit pas dépasser 2000 caractères");
       setLoading(false);
       return;
     }
@@ -210,6 +209,10 @@ export default function Sell() {
         <div className="sell-container">
           <h1 className="sell-title">Vendre un article</h1>
 
+          <p className="mandatory-note">
+            <span className="required-asterisk">*</span> Champs obligatoires
+          </p>
+
           {error && (
             <div className="error-message" style={{
               padding: "1rem",
@@ -224,10 +227,13 @@ export default function Sell() {
 
           <form className="sell-form" onSubmit={onSubmit}>
             <div className="form-row">
-              <label>Que voulez vous vendre ?</label>
+              <label>
+                Que voulez vous vendre ? <span className="required-asterisk">*</span>
+              </label>
               <select
                 value={form.category}
                 onChange={(e) => setField("category", e.target.value)}
+                required
               >
                 {CATEGORIES.map((c) => (
                   <option key={c} value={c}>
@@ -235,16 +241,6 @@ export default function Sell() {
                   </option>
                 ))}
               </select>
-            </div>
-
-            <div className="form-row">
-              <label>Quel programme ?</label>
-              <input
-                type="text"
-                placeholder="ex: Bacc en informatique"
-                value={form.program}
-                onChange={(e) => setField("program", e.target.value)}
-              />
             </div>
 
             <div className="form-row">
@@ -258,13 +254,16 @@ export default function Sell() {
             </div>
 
             <div className="form-row">
-              <label>Titre :</label>
+              <label>
+                Titre : <span className="required-asterisk">*</span>
+              </label>
               <input
                 type="text"
                 placeholder="Titre pour l'item"
                 value={form.title}
                 onChange={(e) => setField("title", e.target.value)}
                 maxLength={150}
+                required
               />
               <small style={{ color: "#6b7280", fontSize: "0.875rem" }}>
                 {form.title.length}/150 caractères
@@ -272,10 +271,13 @@ export default function Sell() {
             </div>
 
             <div className="form-row">
-              <label>État de l'item :</label>
+              <label>
+                État de l'item : <span className="required-asterisk">*</span>
+              </label>
               <select
                 value={form.condition}
                 onChange={(e) => setField("condition", e.target.value)}
+                required
               >
                 {CONDITIONS.map((c) => (
                   <option key={c} value={c}>
@@ -351,12 +353,15 @@ export default function Sell() {
             </div>
 
             <div className="form-row">
-              <label>Prix :</label>
+              <label>
+                Prix : <span className="required-asterisk">*</span>
+              </label>
               <input
                 type="text"
                 placeholder="Prix pour l'item"
                 value={form.price}
                 onChange={(e) => setField("price", e.target.value)}
+                required
               />
             </div>
 

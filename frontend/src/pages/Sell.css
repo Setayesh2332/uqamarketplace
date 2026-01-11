@@ -133,7 +133,7 @@
 
 .sell-main {
   flex: 1;
-  max-width: 900px;
+  max-width: 1320px;  /* Changed from 900px to 1320px */
   margin: 0 auto;
   padding: 48px 24px 72px;
   width: 100%;
@@ -147,12 +147,26 @@
 }
 
 .sell-title {
-  margin: 0 0 36px 0;
+  margin: 0 0 16px 0;
   font-size: 2.2rem;
   font-weight: 700;
   color: #1e2a44;
   text-align: center;
   letter-spacing: 0.02em;
+}
+
+/* Mandatory note styling */
+.mandatory-note {
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 0 0 36px 0;
+}
+
+.required-asterisk {
+  color: #dc2626;
+  font-weight: 700;
+  margin-left: 2px;
 }
 
 .sell-form {
@@ -452,6 +466,10 @@
 
   .sell-title {
     font-size: 1.5rem;
+    margin-bottom: 12px;
+  }
+
+  .mandatory-note {
     margin-bottom: 28px;
   }
 
@@ -488,6 +506,10 @@
 
   .sell-title {
     font-size: 1.3rem;
+    margin-bottom: 10px;
+  }
+  .mandatory-note {
+    font-size: 0.85rem;
     margin-bottom: 20px;
   }
 

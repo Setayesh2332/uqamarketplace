@@ -161,10 +161,14 @@ export async function getListings(filters = {}, sortOptions = {}, limit = 50, of
     }
 
     if (filters.search) {
-      const searchTerm = filters.search.toLowerCase();
-      query = query.or(
-        `title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%,program.ilike.%${searchTerm}%,course.ilike.%${searchTerm}%`
-      );
+      const searchTerm = filters.search.trim();
+      const searchWords = searchTerm.split(/\s+/).filter(word => word.length > 0);
+      if (searchWords.length > 0) {
+        const conditions = searchWords.map(word => 
+          `title.ilike.%${word}%,description.ilike.%${word}%,course.ilike.%${word}%,category.ilike.%${word}%`
+        );
+        query = query.or(conditions.join(','));
+      }
     }
 
     if (filters.min_price !== undefined) {

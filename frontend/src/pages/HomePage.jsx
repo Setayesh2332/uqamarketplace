@@ -92,12 +92,12 @@ export default function HomePage() {
           filters.max_price = parseFloat(maxPrice);
         }
 
-        if (selectedConditions.length > 0) {
-          filters.condition = selectedConditions;
+        if (filters.conditions && filters.conditions.length > 0) {
+          query = query.in("condition", filters.conditions);
         }
 
-        if (selectedCategories.length > 0) {
-          filters.category = selectedCategories;
+        if (filters.categories && filters.categories.length > 0) {
+          query = query.in("category", filters.categories);
         }
 
         const { listings: fetchedListings } = await getListings(
@@ -129,9 +129,9 @@ export default function HomePage() {
 
       // Obtenir la première image ou une image de remplacement
       const imageUrl =
-          listing.listing_images && listing.listing_images.length > 0
-              ? listing.listing_images[0].path
-              : "https://picsum.photos/480/320?placeholder";
+    listing.listing_images && listing.listing_images.length > 0
+        ? listing.listing_images[0].path
+        : "https://placehold.co/480x320/e5e7eb/6b7280?text=Pas+d'image&font=raleway";
 
       // Formater la date
       const datePublication = listing.created_at
