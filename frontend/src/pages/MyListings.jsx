@@ -126,20 +126,10 @@ export default function MyListings() {
                     
                     <div className="listing-content">
                       <h3 className="listing-title">{listing.title}</h3>
-                      <p className="listing-category">{listing.category}</p>
                       <p className="listing-price">{listing.price} $</p>
-                      <p className="listing-condition">État : {listing.condition}</p>
                       <p className="listing-date">
                         Publié le {formatDate(listing.created_at)}
                       </p>
-                      
-                      {listing.description && (
-                        <p className="listing-description">
-                          {listing.description.length > 100
-                            ? `${listing.description.substring(0, 100)}...`
-                            : listing.description}
-                        </p>
-                      )}
                     </div>
 
                     <div className="listing-actions">

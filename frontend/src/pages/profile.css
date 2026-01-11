@@ -133,7 +133,7 @@
 
 .profile-main {
   flex: 1;
-  max-width: 900px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 48px 24px 72px;
   width: 100%;
@@ -183,7 +183,7 @@
 
 .profile-info-wrapper {
   display: flex;
-  gap: 40px;
+  gap: 60px;
   margin-bottom: 40px;
   flex-wrap: wrap;
 }
@@ -233,7 +233,7 @@
 
 .profile-right {
   flex: 1;
-  min-width: 300px;
+  min-width: 500px;
   margin-top: 20px;
 }
 

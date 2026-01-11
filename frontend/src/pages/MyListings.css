@@ -5,7 +5,7 @@
 
 .my-listings-main {
   padding: 2rem 1rem;
-  max-width: 1200px;
+  max-width: 1320px;
   margin: 0 auto;
 }
 
@@ -71,8 +71,27 @@
 
 .listings-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(4, 1fr);  /* 4 columns by default */
   gap: 1.5rem;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 1280px) {
+  .listings-grid {
+    grid-template-columns: repeat(3, 1fr);  /* 3 columns on smaller screens */
+  }
+}
+
+@media (max-width: 968px) {
+  .listings-grid {
+    grid-template-columns: repeat(2, 1fr);  /* 2 columns on tablets */
+  }
+}
+
+@media (max-width: 640px) {
+  .listings-grid {
+    grid-template-columns: 1fr;  /* 1 column on mobile */
+  }
 }
 
 .listing-card {
@@ -128,14 +147,16 @@
 .listing-content {
   padding: 1.25rem;
   flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .listing-title {
   font-size: 1.25rem;
   font-weight: 600;
   color: #111827;
-  margin: 0 0 0.5rem 0;
-  line-height: 1.4;
+  margin: 0 0 0.75rem 0;
+  min-height: 2.8rem;
 }
 
 .listing-category {
@@ -153,7 +174,8 @@
   font-size: 1.5rem;
   font-weight: 700;
   color: #059669;
-  margin: 0.5rem 0;
+  margin: 0.75rem 0 0.5rem 0; 
+  padding: 0 !important; 
 }
 
 .listing-condition {
@@ -165,7 +187,7 @@
 .listing-date {
   font-size: 0.875rem;
   color: #9ca3af;
-  margin: 0.25rem 0 0.75rem 0;
+  margin: 0;
 }
 
 .listing-description {
