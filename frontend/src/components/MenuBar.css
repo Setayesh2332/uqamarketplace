@@ -24,12 +24,16 @@
   cursor: pointer;
 }
 
-.brand__text {
-  font-size: 1.35rem;
-  letter-spacing: 0.14em;
-  font-weight: 700;
-  text-transform: uppercase;
-  color: #1e3a5f;
+/* Brand logo */
+.brand__logo {
+  height: 80px;
+  width: auto;
+  display: block;
+  transition: transform 0.2s ease;
+}
+
+.brand-btn:hover .brand__logo {
+  transform: scale(1.05);
 }
 
 /* Desktop placement: Search takes the center row */

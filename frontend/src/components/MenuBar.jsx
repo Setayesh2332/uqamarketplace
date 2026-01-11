@@ -31,7 +31,11 @@ export default function MenuBar({ onSearch }) {
                 onClick={handleHomeClick}
                 aria-label="Accueil"
             >
-              <span className="brand__text">UQAMarketplace</span>
+              <img 
+                src="/logo.png" 
+                alt="UQAMARKETPLACE" 
+                className="brand__logo"
+              />
             </button>
           </div>
           <SearchBar onSearch={onSearch} icon={<FaSearch />} />
