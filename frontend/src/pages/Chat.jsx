@@ -168,9 +168,11 @@ export default function Chat() {
     return (
       <div className="chat-page">
         <MenuBar onSearch={() => {}} onSellClick={() => navigate("/sell")} />
-        <div className="chat-container">
-          <div className="chat-loading">
-            <p>Chargement...</p>
+        <div className="chat-page-content">
+          <div className="chat-container">
+            <div className="chat-loading">
+              <p>Chargement...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -181,12 +183,14 @@ export default function Chat() {
     return (
       <div className="chat-page">
         <MenuBar onSearch={() => {}} onSellClick={() => navigate("/sell")} />
-        <div className="chat-container">
-          <div className="chat-error">
-            <p>{error}</p>
-            <button className="btn-back-to-messages" onClick={() => navigate("/messages")}>
-              Retour aux messages
-            </button>
+        <div className="chat-page-content">
+          <div className="chat-container">
+            <div className="chat-error">
+              <p>{error}</p>
+              <button className="btn-back-to-messages" onClick={() => navigate("/messages")}>
+                Retour aux messages
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -200,135 +204,134 @@ export default function Chat() {
   return (
     <div className="chat-page">
       <MenuBar onSearch={() => {}} onSellClick={() => navigate("/sell")} />
-      <div className="chat-container">
-        {/* Header avec infos de l'autre utilisateur et de l'annonce */}
-        <div className="chat-header">
-          <button className="btn-back-chat" onClick={() => navigate("/messages")}>
-            ← Retour
-          </button>
-          <div className="chat-header-info">
-            <div className="chat-header-user">
-              <h2 className="chat-other-name">{conversation.otherUser.fullName}</h2>
+      <div className="chat-page-content">
+        <button className="btn-back-chat" onClick={() => navigate("/messages")}>
+          ← Retour
+        </button>
+        <div className="chat-container">
+          {/* Header avec infos de l'autre utilisateur et de l'annonce */}
+          <div className="chat-header">
+            <div className="chat-header-info">
+              <div className="chat-header-user">
+                <h2 className="chat-other-name">{conversation.otherUser.fullName}</h2>
+              </div>
+              {conversation.listing && (
+                <div className="chat-header-listing">
+                  <div className="chat-listing-image">
+                    {conversation.listing.listing_images?.[0] ? (
+                      <img
+                        src={conversation.listing.listing_images[0].path}
+                        alt={conversation.listing.title}
+                      />
+                    ) : (
+                      <img
+                        src="https://picsum.photos/480/320?placeholder"
+                        alt="Placeholder"
+                        className="chat-listing-image-placeholder-img"
+                      />
+                    )}
+                  </div>
+                  <div className="chat-listing-info">
+                    <p className="chat-listing-title">{conversation.listing.title}</p>
+                    <p className="chat-listing-price">{conversation.listing.price} $</p>
+                  </div>
+                </div>
+              )}
             </div>
-            {conversation.listing && (
-              <div className="chat-header-listing">
-                <div className="chat-listing-image">
-                  {conversation.listing.listing_images?.[0] ? (
-                    <img
-                      src={conversation.listing.listing_images[0].path}
-                      alt={conversation.listing.title}
-                    />
-                  ) : (
-                    <img
-                      src="https://picsum.photos/480/320?placeholder"
-                      alt="Placeholder"
-                      className="chat-listing-image-placeholder-img"
-                    />
+            </div>
+
+          {/* Zone des messages */}
+          <div className="chat-messages">
+            {messages.length === 0 ? (
+              <div className="chat-empty">
+                <p>Aucun message pour le moment. Envoyez le premier message !</p>
+              </div>
+            ) : (
+              messages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`message-bubble ${
+                    message.isFromCurrentUser ? "message-sent" : "message-received"
+                  }`}
+                >
+                  {!message.isFromCurrentUser && (
+                    <div className="message-sender-name">
+                      {message.sender?.fullName || "Utilisateur"}
+                    </div>
                   )}
+                  {message.image_url && (
+                    <div className="message-image">
+                      <img src={message.image_url} alt="Pièce jointe" />
+                    </div>
+                  )}
+                  {message.content && (
+                    <div className="message-content">{message.content}</div>
+                  )}
+                  <div className="message-time">{formatMessageTime(message.created_at)}</div>
+
                 </div>
-                <div className="chat-listing-info">
-                  <p className="chat-listing-title">{conversation.listing.title}</p>
-                  <p className="chat-listing-price">{conversation.listing.price} $</p>
-                </div>
-              </div>
+              ))
+              )}
+            <div ref={messagesEndRef} />
+          </div>
+          {/* Zone de saisie */}
+          {error && (
+            <div className="chat-error-message">
+              <p>{error}</p>
+            </div>
             )}
-          </div>
-        </div>
-
-        {/* Zone des messages */}
-        <div className="chat-messages">
-          {messages.length === 0 ? (
-            <div className="chat-empty">
-              <p>Aucun message pour le moment. Envoyez le premier message !</p>
-            </div>
-          ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`message-bubble ${
-                  message.isFromCurrentUser ? "message-sent" : "message-received"
-                }`}
-              >
-                {!message.isFromCurrentUser && (
-                  <div className="message-sender-name">
-                    {message.sender?.fullName || "Utilisateur"}
-                  </div>
-                )}
-                {message.image_url && (
-                  <div className="message-image">
-                    <img src={message.image_url} alt="Pièce jointe" />
-                  </div>
-                )}
-                {message.content && (
-                  <div className="message-content">{message.content}</div>
-                )}
-                <div className="message-time">{formatMessageTime(message.created_at)}</div>
+            {imagePreview && (
+            <div className="image-preview-container">
+              <div className="image-preview">
+                <img src={imagePreview} alt="Aperçu" />
+                <button
+                  className="btn-remove-image"
+                  onClick={handleRemoveImage}
+                  aria-label="Retirer l'image"
+                >
+                  ×
+                </button>
               </div>
-            ))
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Zone de saisie */}
-        {error && (
-          <div className="chat-error-message">
-            <p>{error}</p>
-          </div>
-        )}
-
-        {imagePreview && (
-          <div className="image-preview-container">
-            <div className="image-preview">
-              <img src={imagePreview} alt="Aperçu" />
-              <button
-                className="btn-remove-image"
-                onClick={handleRemoveImage}
-                aria-label="Retirer l'image"
-              >
-                ×
-              </button>
             </div>
+            )}
+            <div className="chat-input-container">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageSelect}
+              style={{ display: "none" }}
+            />
+            <button
+              className="btn-attach-image"
+              onClick={() => fileInputRef.current?.click()}
+              aria-label="Joindre une image"
+            >
+              +
+            </button>
+            <input
+              type="text"
+              className="chat-input"
+              placeholder="Tapez votre message..."
+              value={messageText}
+              onChange={(e) => setMessageText(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === "Enter" && !sending) {
+                  handleSendMessage();
+                }
+              }}
+              disabled={sending}
+            />
+            <button
+              className="btn-send-chat"
+              onClick={handleSendMessage}
+              disabled={sending || (!messageText.trim() && !imageFile)}
+            >
+              {sending ? "..." : "Envoyer"}
+            </button>
           </div>
-        )}
-
-        <div className="chat-input-container">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageSelect}
-            style={{ display: "none" }}
-          />
-          <button
-            className="btn-attach-image"
-            onClick={() => fileInputRef.current?.click()}
-            aria-label="Joindre une image"
-          >
-            +
-          </button>
-          <input
-            type="text"
-            className="chat-input"
-            placeholder="Tapez votre message..."
-            value={messageText}
-            onChange={(e) => setMessageText(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === "Enter" && !sending) {
-                handleSendMessage();
-              }
-            }}
-            disabled={sending}
-          />
-          <button
-            className="btn-send-chat"
-            onClick={handleSendMessage}
-            disabled={sending || (!messageText.trim() && !imageFile)}
-          >
-            {sending ? "..." : "Envoyer"}
-          </button>
         </div>
       </div>
     </div>
   );
 }
-
