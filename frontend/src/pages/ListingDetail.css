@@ -132,6 +132,12 @@
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
+  align-items: baseline;
+}
+
+.listing-title,
+.listing-price {
+  line-height: 1.3;
 }
 
 .listing-title {
@@ -145,11 +151,10 @@
 
 .listing-price {
   padding: 0.5rem 1rem;
-  border-radius: 10px;
-  font-size: 1.3rem;
+  font-size: 1.4rem;
   font-weight: 700;
   white-space: nowrap;
-  color: #49f6bc; 
+  color: #ffffff; 
 }
 
 /* Image Carousel */
