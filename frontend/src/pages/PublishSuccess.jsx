@@ -32,6 +32,14 @@ export default function PublishSuccess() {
     }
   }, [location.state]);
 
+  const handleViewListing = () => {
+    if (listing?.id) {
+      navigate(`/listing/${listing.id}`);
+    } else {
+      navigate("/my-listings");
+    }
+  };
+
   if (!listing) {
     return (
       <div className="publish-success-shell">
@@ -147,9 +155,9 @@ export default function PublishSuccess() {
           <div className="ps-actions">
             <button
               className="ps-btn ps-btn--ghost"
-              onClick={() => navigate("/profile")}
+              onClick={handleViewListing}
             >
-              Voir mon profil
+              Voir mon annonce
             </button>
             <button
               className="ps-btn ps-btn--primary"

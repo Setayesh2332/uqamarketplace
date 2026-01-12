@@ -66,23 +66,24 @@
 
 .btn-back-chat {
   align-self: flex-start;
-  background:white;
-  border: 1px solid #e5e7eb;
-  color: #374151;
-  font-size: 0.95rem;
+  background: white;
+  border: 2px solid #e5e7eb;
+  color: #4b5563;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  padding: 0.6rem 1.25rem;
+  padding: 0.65rem 1.25rem;
   border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(15, 23, 42, 0.08);
-  transition: color 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .btn-back-chat:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.12);
-  border-color: #c7d2fe;
-  color: #1f2937;
+  background: linear-gradient(135deg, #4f67ef 0%, #5b75f0 100%);
+  color: white;
+  border-color: #4f67ef;
+  transform: translateX(-6px);
+  box-shadow: 0 4px 16px rgba(79, 103, 239, 0.25);
 }
 
 .chat-header-info {
