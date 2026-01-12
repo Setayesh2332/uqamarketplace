@@ -149,14 +149,17 @@
 }
 
 .ps-btn--ghost {
-  background: #f8f9fa;
-  color: #1e2a44;
-  border: 1px solid #d4dbea;
+  border-radius: 14px;
+  padding: 0.6rem 1.2rem;
+  color: #3d6df4;
+  border: 1px solid rgba(61, 109, 244, 0.4);
+  background: rgba(61, 109, 244, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ps-btn--ghost:hover {
-  background: #e9ecef;
-  border-color: #c0c7db;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(61, 109, 244, 0.25);
 }
 
 /* MenuBar styles (copié depuis home.css pour cohérence) */
