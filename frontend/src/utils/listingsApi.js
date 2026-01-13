@@ -145,6 +145,10 @@ export async function getListings(filters = {}, sortOptions = {}, limit = 50, of
       query = query.eq("category", filters.category);
     }
 
+     if (Array.isArray(filters.categories) && filters.categories.length > 0) {
+      query = query.in("category", filters.categories);
+    }
+
     if (filters.status) {
       query = query.eq("status", filters.status);
     } else {
@@ -158,6 +162,10 @@ export async function getListings(filters = {}, sortOptions = {}, limit = 50, of
 
     if (filters.condition) {
       query = query.eq("condition", filters.condition);
+    }
+
+    if (Array.isArray(filters.conditions) && filters.conditions.length > 0) {
+      query = query.in("condition", filters.conditions);
     }
 
     if (filters.search) {

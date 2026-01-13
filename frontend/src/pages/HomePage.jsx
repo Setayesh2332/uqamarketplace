@@ -92,12 +92,12 @@ export default function HomePage() {
           filters.max_price = parseFloat(maxPrice);
         }
 
-        if (filters.conditions && filters.conditions.length > 0) {
-          query = query.in("condition", filters.conditions);
+        if (selectedConditions.length > 0) {
+          filters.conditions = selectedConditions;
         }
-
-        if (filters.categories && filters.categories.length > 0) {
-          query = query.in("category", filters.categories);
+        
+        if (selectedCategories.length > 0) {
+          filters.categories = selectedCategories;
         }
 
         const { listings: fetchedListings } = await getListings(
