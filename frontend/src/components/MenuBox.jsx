@@ -1,10 +1,24 @@
 import { useNavigate } from "react-router-dom";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 
-export default function MenuBox({ id, title, example }) {
+export default function MenuBox({
+  id,
+  title,
+  example,
+  isFavorite = false,
+  onToggleFavorite,
+}) {
     const navigate = useNavigate();
 
     const handleVoirPlus = () => {
         navigate(`/listing/${id}`);
+    };
+
+    const handleToggleFavorite = (event) => {
+        event.stopPropagation();
+        if (onToggleFavorite) {
+            onToggleFavorite(id);
+        }
     };
 
     return (
@@ -12,6 +26,18 @@ export default function MenuBox({ id, title, example }) {
             {/* Image section (top) */}
             <div className="menu-box__image">
                 <img src={example.image} alt={example.titre || title} />
+                {onToggleFavorite && (
+                    <button
+                        type="button"
+                        className={`menu-box__favorite ${isFavorite ? "is-active" : ""}`}
+                        aria-label={
+                            isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"
+                        }
+                        onClick={handleToggleFavorite}
+                    >
+                        {isFavorite ? <FaHeart /> : <FaRegHeart />}
+                    </button>
+                )}
             </div>
 
             {/* Info section (bottom) */}

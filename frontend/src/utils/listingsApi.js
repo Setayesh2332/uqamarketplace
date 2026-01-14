@@ -1,5 +1,33 @@
 import { supabase } from "./supabaseClient";
 
+const buildListingWithProfiles = (listing) => {
+  const profiles = listing.profile_id
+    ? {
+        id: listing.profile_id,
+        first_name: listing.first_name,
+        last_name: listing.last_name,
+        email: listing.profile_email,
+      }
+    : null;
+
+  const {
+    profile_id,
+    first_name,
+    last_name,
+    profile_email,
+    profile_phone,
+    ...listingData
+  } = listing;
+
+  return {
+    ...listingData,
+    listing_images: (listing.listing_images || []).sort(
+      (a, b) => a.display_order - b.display_order
+    ),
+    profiles,
+  };
+};
+
 /**
  * Créer une nouvelle annonce
  * @param {Object} listingData - Les données de l'annonce du formulaire
@@ -201,39 +229,8 @@ export async function getListings(filters = {}, sortOptions = {}, limit = 50, of
       throw error;
     }
 
-    // Transformer les données pour construire l'objet profiles à partir des colonnes de la vue
-    const listingsWithSortedImages = (data || []).map((listing) => {
-      // Construire l'objet profiles à partir des colonnes de la vue
-      const profiles = listing.profile_id
-        ? {
-            id: listing.profile_id,
-            first_name: listing.first_name,
-            last_name: listing.last_name,
-            email: listing.profile_email,
-          }
-        : null;
-
-      // Retirer les colonnes du profil de l'objet principal pour garder la structure propre
-      const {
-        profile_id,
-        first_name,
-        last_name,
-        profile_email,
-        profile_phone,
-        ...listingData
-      } = listing;
-
-      return {
-        ...listingData,
-        listing_images: (listing.listing_images || []).sort(
-          (a, b) => a.display_order - b.display_order
-        ),
-        profiles: profiles,
-      };
-    });
-
     return {
-      listings: listingsWithSortedImages,
+      listings: (data || []).map(buildListingWithProfiles),
       total: count || 0,
     };
   } catch (error) {
@@ -267,41 +264,53 @@ export async function getListingById(listingId) {
       throw error;
     }
 
-    // Construire l'objet profiles à partir des colonnes de la vue
-    const profiles = data.profile_id
-      ? {
-          id: data.profile_id,
-          first_name: data.first_name,
-          last_name: data.last_name,
-          email: data.profile_email,
-        }
-      : null;
-
-    // Retirer les colonnes du profil de l'objet principal
-    const {
-      profile_id,
-      first_name,
-      last_name,
-      profile_email,
-      profile_phone,
-      ...listingData
-    } = data;
-
-    // Trier les images par display_order
-    if (listingData.listing_images) {
-      listingData.listing_images.sort((a, b) => a.display_order - b.display_order);
-    }
+    const listingData = buildListingWithProfiles(data);
 
     return {
       ...listingData,
-      profiles: profiles,
-      images: (listingData.listing_images || []).map(img => ({
+      images: (listingData.listing_images || []).map((img) => ({
         id: img.id,
-        url: img.path
-      }))
+        url: img.path,
+      })),
     };
   } catch (error) {
     console.error("Erreur lors de la récupération de l'annonce:", error);
+    throw error;
+  }
+}
+
+/**
+ * Obtenir plusieurs annonces par leurs IDs
+ * @param {string[]} listingIds - Tableau des IDs d'annonces
+ * @returns {Promise<Object[]>} Tableau d'annonces
+ */
+export async function getListingsByIds(listingIds = []) {
+  if (!Array.isArray(listingIds) || listingIds.length === 0) {
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from("listings_with_profiles")
+      .select(
+        `\n        *,\n        listing_images!listing_images_listing_id_fkey (\n          id,\n          path,\n          display_order\n        )\n      `
+      )
+      .in("id", listingIds);
+
+    if (error) {
+      throw error;
+    }
+
+    const mappedListings = (data || []).map(buildListingWithProfiles);
+    const listingsById = new Map(
+      mappedListings.map((listing) => [listing.id, listing])
+    );
+
+    return listingIds
+      .map((id) => listingsById.get(id))
+      .filter(Boolean);
+  } catch (error) {
+    console.error("Erreur lors de la récupération des annonces:", error);
     throw error;
   }
 }

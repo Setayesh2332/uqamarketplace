@@ -4,13 +4,16 @@ import MenuBar from "../components/MenuBar";
 import { getListingById } from "../utils/listingsApi";
 import { getOrCreateConversation } from "../utils/conversationsApi";
 import { useAuth } from "../contexts/AuthContext";
+import { useFavorites } from "../contexts/FavoritesContext";
 import ArticleRating from "../components/ratingArticle";
+import { FaHeart, FaRegHeart } from "react-icons/fa";
 import "./ListingDetail.css";
 
 export default function ListingDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -96,6 +99,8 @@ export default function ListingDetail() {
       setSending(false);
     }
   };
+
+  const favoriteActive = listing ? isFavorite(listing.id) : false;
 
   return (
     <div className="listing-detail-page">
@@ -195,7 +200,27 @@ export default function ListingDetail() {
                     )}
                 </div>
 
-                {/* Composant Rating - après le carousel */}
+                <div className="listing-favorite-row">
+                  <button
+                    type="button"
+                    className={`listing-favorite-inline ${
+                      favoriteActive ? "is-active" : ""
+                    }`}
+                    aria-label={
+                      favoriteActive
+                        ? "Retirer des favoris"
+                        : "Ajouter aux favoris"
+                    }
+                    onClick={() => toggleFavorite(listing.id)}
+                  >
+                    {favoriteActive ? <FaHeart /> : <FaRegHeart />}
+                    <span>
+                      {favoriteActive ? "Retirer des favoris" : "Ajouter aux favoris"}
+                    </span>
+                  </button>
+                </div>
+
+                {/* Composant Rating - après le bouton favoris */}
                 <ArticleRating sellerId={listing.user_id} userId={user?.id} />
               </div>
 

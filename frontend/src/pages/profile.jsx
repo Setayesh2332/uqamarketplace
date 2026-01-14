@@ -157,7 +157,7 @@ function Profile() {
       icon: <FaHeart />,
       title: "Favoris",
       description: "Vos articles sauvegardés",
-      link: "#",
+      link: "/favorites",
     },
   ];
 

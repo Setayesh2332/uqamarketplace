@@ -4,6 +4,7 @@ import { Plus, X } from "lucide-react";
 import MenuBar from "../components/MenuBar";
 import MenuBox from "../components/MenuBox";
 import { getListings } from "../utils/listingsApi";
+import { useFavorites } from "../contexts/FavoritesContext";
 import "./home.css";
 
 // Mapper les catégories aux attributs basé sur la structure MenuList
@@ -43,6 +44,7 @@ const conditions = ["Neuf", "Comme neuf", "Bon", "Acceptable"];
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const [query, setQuery] = useState("");
   const [sortOpen, setSortOpen] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -407,6 +409,8 @@ export default function HomePage() {
                         title={catLabel}
                         attributes={attributes}
                         example={example}
+                        isFavorite={isFavorite(id)}
+                        onToggleFavorite={toggleFavorite}
                     />
                 ))}
               </section>

@@ -22,6 +22,8 @@ import Chat from "./pages/Chat";
 import Layout from "./components/Layout";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { FavoritesProvider } from "./contexts/FavoritesContext";
+import Favorites from "./pages/Favorites";
 
 function ProtectedRoute({ children }) {
   const { user, loading } = useAuth();
@@ -41,8 +43,9 @@ function App() {
   return (
     <LanguageProvider>
       <AuthProvider>
-        <Router>
-          <Routes>
+        <FavoritesProvider>
+          <Router>
+            <Routes>
             {/* Page d'accueil protégée avec Layout */}
             <Route
               path="/"
@@ -67,6 +70,18 @@ function App() {
                 <ProtectedRoute>
                   <Layout>
                     <Profile />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+
+            {/* Favoris */}
+            <Route
+              path="/favorites"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <Favorites />
                   </Layout>
                 </ProtectedRoute>
               }
@@ -163,8 +178,9 @@ function App() {
 
             {/* Redirection par défaut */}
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Router>
+            </Routes>
+          </Router>
+        </FavoritesProvider>
       </AuthProvider>
     </LanguageProvider>
   );

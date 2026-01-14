@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import MenuBar from "../components/MenuBar";
 import MenuBox from "../components/MenuBox";
 import { getListings } from "../utils/listingsApi";
+import { useFavorites } from "../contexts/FavoritesContext";
 import "./home.css";
 
 // Mapper les catégories URL aux catégories DB
@@ -26,6 +27,7 @@ const CATEGORY_ATTRIBUTES = {
 
 export default function CategoryPage() {
   const navigate = useNavigate();
+  const { isFavorite, toggleFavorite } = useFavorites();
   const { category: categoryParam } = useParams();
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("prix_asc");
@@ -199,9 +201,12 @@ export default function CategoryPage() {
             {items.map(({ id, catLabel, attributes, example }) => (
               <MenuBox
                 key={id}
+                id={id}
                 title={catLabel}
                 attributes={attributes}
                 example={example}
+                isFavorite={isFavorite(id)}
+                onToggleFavorite={toggleFavorite}
               />
             ))}
           </section>
