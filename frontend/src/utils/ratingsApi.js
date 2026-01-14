@@ -14,10 +14,10 @@ export async function getSellerRatings(sellerId) {
 
     if (error) throw error;
 
-    const ratings = data || [];
+    const ratings = (data || []).filter((rating) => rating?.rating != null);
     const totalVotes = ratings.length;
     const averageRating = totalVotes > 0
-      ? ratings.reduce((sum, r) => sum + r.rating, 0) / totalVotes
+      ? ratings.reduce((sum, r) => sum + Number(r.rating || 0), 0) / totalVotes
       : 0;
 
     return {
@@ -66,6 +66,9 @@ export async function getUserRatingForSeller(sellerId, userId) {
  */
 export async function submitRating(sellerId, userId, rating) {
   try {
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+      throw new Error("La note doit être un nombre entre 1 et 5.");
+    }
     // Vérifier si l'utilisateur a déjà évalué ce vendeur
     const existingRating = await getUserRatingForSeller(sellerId, userId);
 

@@ -221,7 +221,10 @@ export default function ListingDetail() {
                 </div>
 
                 {/* Composant Rating - après le bouton favoris */}
-                <ArticleRating sellerId={listing.user_id} userId={user?.id} />
+                <ArticleRating
+                  sellerId={listing.user_id ?? listing.profiles?.id}
+                  userId={user?.id}
+                />
               </div>
 
               {/* Section droite - Infos condensées */}

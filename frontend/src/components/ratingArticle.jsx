@@ -15,10 +15,14 @@ const ArticleRating = ({ sellerId, userId }) => {
   const [hasVoted, setHasVoted] = useState(false);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const isOwnListing = sellerId && userId && sellerId === userId;
 
   useEffect(() => {
     const fetchRatings = async () => {
-      if (!sellerId) return;
+      if (!sellerId) {
+        setLoading(false);
+        return;
+      }
 
       try {
         setLoading(true);
@@ -45,8 +49,18 @@ const ArticleRating = ({ sellerId, userId }) => {
   }, [sellerId, userId]);
 
   const handleRating = async (rating) => {
+    if (!sellerId) {
+      alert("Impossible d'évaluer ce vendeur pour le moment.");
+      return;
+    }
+
     if (!userId) {
       alert("Vous devez être connecté pour noter le vendeur");
+      return;
+    }
+
+    if (isOwnListing) {
+      alert("Vous ne pouvez pas noter votre propre annonce.");
       return;
     }
 
@@ -104,7 +118,11 @@ const ArticleRating = ({ sellerId, userId }) => {
 
       <div className="rating-input">
         <p className="rating-label">
-          {hasVoted ? "Modifier votre note :" : "Notez le vendeur :"}
+          {isOwnListing
+            ? "Vous ne pouvez pas noter votre propre annonce."
+            : hasVoted
+              ? "Modifier votre note :"
+              : "Notez le vendeur :"}
         </p>
         <div className="stars-interactive">
           {[1, 2, 3, 4, 5].map((star) => (
@@ -116,13 +134,15 @@ const ArticleRating = ({ sellerId, userId }) => {
               stroke={
                 star <= (hoverRating || userRating) ? "#FFD700" : "#9CA3AF"
               }
-              onMouseEnter={() => !submitting && setHoverRating(star)}
+              onMouseEnter={() =>
+                !submitting && !isOwnListing && setHoverRating(star)
+              }
               onMouseLeave={() => setHoverRating(0)}
-              onClick={() => !submitting && handleRating(star)}
+              onClick={() => !submitting && !isOwnListing && handleRating(star)}
               style={{
-                cursor: submitting ? "not-allowed" : "pointer",
+                cursor: submitting || isOwnListing ? "not-allowed" : "pointer",
                 transition: "all 0.2s",
-                opacity: submitting ? 0.5 : 1,
+                opacity: submitting || isOwnListing ? 0.5 : 1,
               }}
             />
           ))}
@@ -131,6 +151,11 @@ const ArticleRating = ({ sellerId, userId }) => {
         {hasVoted && !submitting && (
           <p className="user-rating-text">
             Votre note : {userRating} étoile{userRating > 1 ? "s" : ""}
+          </p>
+        )}
+        {!userId && (
+          <p className="user-rating-text">
+            Connectez-vous pour attribuer une note.
           </p>
         )}
       </div>
